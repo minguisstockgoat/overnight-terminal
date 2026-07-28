@@ -1,0 +1,196 @@
+/* OVERNIGHT TERMINAL — Bloomberg-style dark terminal */
+:root {
+  --bg: #000000;
+  --panel: #0a0a0c;
+  --tile: #0e0e11;
+  --tile-hover: #16161a;
+  --border: #1f1f24;
+  --amber: #ff9e1b;
+  --amber-dim: #b8720f;
+  --ink: #e8e8ea;
+  --ink-2: #9a9aa4;
+  --ink-3: #5c5c66;
+  --up: #2bd964;
+  --dn: #ff4545;
+  --up-bg: rgba(43, 217, 100, 0.14);
+  --dn-bg: rgba(255, 69, 69, 0.16);
+  --mono: "IBM Plex Mono", "JetBrains Mono", Consolas, "SF Mono", "Cascadia Mono", monospace;
+}
+/* 한국식 색상: 빨강=상승, 파랑=하락 */
+html.kr-conv {
+  --up: #ff4545;
+  --dn: #4d94ff;
+  --up-bg: rgba(255, 69, 69, 0.16);
+  --dn-bg: rgba(77, 148, 255, 0.14);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 13px;
+  display: grid;
+  grid-template-areas: "top top" "tape tape" "main side" "foot foot";
+  grid-template-columns: 1fr 300px;
+  grid-template-rows: auto auto 1fr auto;
+  min-height: 100vh;
+}
+
+/* ── top bar ─────────────────────────────── */
+#topbar {
+  grid-area: top;
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(#111114, #0a0a0c);
+}
+.brand { font-weight: 700; font-size: 15px; letter-spacing: 1px; white-space: nowrap; }
+.brand-block { color: var(--amber); }
+.brand-amber { color: var(--amber); }
+.brand-sub { color: var(--ink-3); font-size: 10px; font-weight: 400; margin-left: 10px; letter-spacing: 0; }
+.clocks { display: flex; gap: 18px; }
+.clock { display: flex; flex-direction: column; align-items: flex-start; }
+.clock-city { font-size: 9px; color: var(--ink-3); letter-spacing: 1.5px; }
+.clock-time { font-size: 14px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.sessions { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+.badge {
+  font-size: 10px; letter-spacing: 0.5px;
+  padding: 3px 8px; border: 1px solid var(--border); border-radius: 2px;
+  color: var(--ink-3); background: var(--tile);
+}
+.badge.on { color: var(--up); border-color: var(--up); }
+.badge.pre { color: var(--amber); border-color: var(--amber-dim); }
+#conv-toggle {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.5px;
+  color: var(--ink-2); background: var(--tile);
+  border: 1px solid var(--border); border-radius: 2px;
+  padding: 4px 9px; cursor: pointer;
+}
+#conv-toggle:hover { color: var(--amber); border-color: var(--amber-dim); }
+
+/* ── ticker tape ─────────────────────────── */
+#tape-wrap {
+  grid-area: tape;
+  overflow: hidden; white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+  background: #050506;
+  padding: 5px 0;
+}
+#tape { display: inline-block; animation: tape-scroll 90s linear infinite; will-change: transform; }
+#tape-wrap:hover #tape { animation-play-state: paused; }
+@keyframes tape-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.tape-item { display: inline-block; margin: 0 16px; font-size: 12px; }
+.tape-sym { color: var(--amber); margin-right: 6px; }
+.tape-px { color: var(--ink); margin-right: 6px; font-variant-numeric: tabular-nums; }
+
+/* ── main grid & panels ──────────────────── */
+#grid { grid-area: main; padding: 10px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+#side { grid-area: side; padding: 10px 10px 10px 0; display: flex; flex-direction: column; gap: 10px; }
+.panel { background: var(--panel); border: 1px solid var(--border); border-radius: 3px; }
+.panel h2 {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: var(--amber);
+  padding: 7px 10px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; gap: 8px;
+}
+.pno {
+  color: #000; background: var(--amber);
+  padding: 0 5px; border-radius: 1px; font-size: 10px;
+}
+.pnote { color: var(--ink-3); font-weight: 400; letter-spacing: 0; font-size: 10px; margin-left: auto; text-align: right; }
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(228px, 1fr));
+  gap: 1px; background: var(--border); border-top: none;
+}
+
+/* ── tile ────────────────────────────────── */
+.tile {
+  background: var(--tile);
+  padding: 8px 10px 7px;
+  position: relative;
+  min-height: 96px;
+  transition: background 0.5s;
+}
+.tile:hover { background: var(--tile-hover); }
+.tile.flash-up { background: var(--up-bg); transition: none; }
+.tile.flash-dn { background: var(--dn-bg); transition: none; }
+.t-head { display: flex; align-items: baseline; gap: 6px; margin-bottom: 3px; }
+.t-name { color: var(--ink-2); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.t-sym { color: var(--amber-dim); font-size: 10px; }
+.t-badge {
+  font-size: 9px; color: var(--ink-3); border: 1px solid var(--border);
+  padding: 0 4px; border-radius: 2px; margin-left: auto; white-space: nowrap;
+}
+.t-badge.live { color: var(--up); border-color: var(--up); }
+.t-main { display: flex; align-items: center; gap: 10px; }
+.t-left { flex: 1 1 auto; min-width: 0; }
+.t-px {
+  font-size: 21px; font-weight: 700; color: var(--ink);
+  font-variant-numeric: tabular-nums; line-height: 1.15;
+}
+.t-px .t-unit { font-size: 11px; color: var(--ink-3); font-weight: 400; margin-left: 2px; }
+.t-chg { font-size: 12px; font-variant-numeric: tabular-nums; }
+.t-chg.up { color: var(--up); }
+.t-chg.dn { color: var(--dn); }
+.t-chg.flat { color: var(--ink-2); }
+.t-spark { flex: 0 0 auto; }
+.t-spark canvas { display: block; cursor: crosshair; }
+.t-foot {
+  margin-top: 5px; font-size: 9.5px; color: var(--ink-3);
+  display: flex; gap: 8px; font-variant-numeric: tabular-nums;
+  white-space: nowrap; overflow: hidden;
+}
+.tile.err .t-px { color: var(--ink-3); }
+.t-err { color: var(--dn); font-size: 10px; }
+
+/* ── side: TG mention bars ───────────────── */
+#tg-bars { padding: 8px 10px; display: flex; flex-direction: column; gap: 5px; }
+.tg-row { display: grid; grid-template-columns: 92px 1fr 38px; align-items: center; gap: 8px; font-size: 11px; }
+.tg-label { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tg-track { background: #17171b; border-radius: 1px; height: 8px; overflow: hidden; }
+.tg-fill { height: 100%; background: var(--amber); border-radius: 1px; }
+.tg-val { color: var(--ink-3); text-align: right; font-size: 10px; }
+#panel-notes ul { list-style: none; padding: 8px 10px; display: flex; flex-direction: column; gap: 7px; }
+#panel-notes li { font-size: 11px; line-height: 1.5; color: var(--ink-2); font-family: system-ui, sans-serif; }
+#panel-notes li b { color: var(--amber); font-family: var(--mono); }
+
+/* ── status bar ──────────────────────────── */
+#statusbar {
+  grid-area: foot;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 6px 14px;
+  border-top: 1px solid var(--border);
+  background: #0a0a0c;
+  font-size: 10px; color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-3); display: inline-block; }
+.dot.ok { background: var(--up); box-shadow: 0 0 6px var(--up); }
+.dot.bad { background: var(--dn); box-shadow: 0 0 6px var(--dn); }
+.sep { color: var(--border); }
+.right { margin-left: auto; }
+
+/* ── tooltip ─────────────────────────────── */
+#tooltip {
+  position: fixed; z-index: 50; pointer-events: none; display: none;
+  background: #1c1c22; border: 1px solid var(--amber-dim); border-radius: 2px;
+  padding: 4px 7px; font-size: 10px; color: var(--ink);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+#tooltip .tt-t { color: var(--ink-3); margin-right: 6px; }
+
+/* ── responsive ──────────────────────────── */
+@media (max-width: 1080px) {
+  body { grid-template-areas: "top" "tape" "main" "side" "foot"; grid-template-columns: 1fr; }
+  #side { flex-direction: row; padding: 0 10px 10px; }
+  #side .panel { flex: 1 1 0; }
+}
+@media (max-width: 720px) {
+  #side { flex-direction: column; }
+  .clocks { gap: 10px; }
+  #topbar { gap: 10px; }
+  .tiles { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+  .t-px { font-size: 18px; }
+}

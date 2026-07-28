@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OVERNIGHT TERMINAL — 오버나잇 마켓 대시보드</title>
+<meta name="description" content="WTI·미국채·환율·야간선물 등 오버나잇 장세 확인용 블룸버그 터미널 스타일 실시간 대시보드">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📟</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header id="topbar">
+  <div class="brand">
+    <span class="brand-block">■</span> OVERNIGHT<span class="brand-amber">TERMINAL</span>
+    <span class="brand-sub">KR 오버나잇 마켓 모니터</span>
+  </div>
+  <div class="clocks">
+    <div class="clock"><span class="clock-city">SEOUL</span><span class="clock-time" id="clock-sel">--:--:--</span></div>
+    <div class="clock"><span class="clock-city">NEW YORK</span><span class="clock-time" id="clock-nyc">--:--:--</span></div>
+    <div class="clock"><span class="clock-city">UTC</span><span class="clock-time" id="clock-utc">--:--:--</span></div>
+  </div>
+  <div class="sessions" id="sessions"></div>
+  <button id="conv-toggle" title="등락 색상 규칙 전환 (블룸버그식 ↔ 한국식)">▲ <span id="conv-label">GREEN=UP</span></button>
+</header>
+
+<div id="tape-wrap"><div id="tape"></div></div>
+
+<main id="grid"></main>
+
+<aside id="side">
+  <section class="panel" id="panel-tg">
+    <h2><span class="pno">TG</span> 텔레그램 언급 빈도 <span class="pnote">최근 1개월 · 2026-07-29 분석</span></h2>
+    <div id="tg-bars"></div>
+  </section>
+  <section class="panel" id="panel-notes">
+    <h2><span class="pno">MN</span> MACRO NOTES <span class="pnote">2026년 7월</span></h2>
+    <ul id="macro-notes">
+      <li><b>유가</b> — 미국·이란 충돌로 WTI 68→91달러 급등 후 교전 중단에 80달러선 급락. 홍해·호르무즈 헤드라인에 유가·증시 연동.</li>
+      <li><b>금리</b> — 미 10년물 4.69% 연고점(연준 인상 베팅), 30년물 5% 상회 지속. 일본 10년물 1996년 이후 최고.</li>
+      <li><b>환율</b> — 엔/달러 163엔 돌파(40년 최저 엔화), 원/달러 1,550→1,459원. 당국 개입·수급 이슈 지속.</li>
+      <li><b>국장</b> — 코스피 사이드카·서킷브레이커 반복 발동 변동성 구간. 야간선물 ±4~5% 등락 빈발.</li>
+    </ul>
+  </section>
+</aside>
+
+<footer id="statusbar">
+  <span id="conn-dot" class="dot"></span>
+  <span id="conn-text">CONNECTING…</span>
+  <span class="sep">|</span>
+  <span>UPDATED <span id="last-update">--:--:--</span></span>
+  <span class="sep">|</span>
+  <span>SRC Yahoo Finance(지연 가능)·Binance WS · 20s 폴링</span>
+  <span class="sep">|</span>
+  <span id="err-count">ERR 0</span>
+  <span class="right">투자 판단 참고용 · 시세 정확성 비보장</span>
+</footer>
+
+<div id="tooltip"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
