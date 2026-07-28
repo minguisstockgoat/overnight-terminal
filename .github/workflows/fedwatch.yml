@@ -1,0 +1,28 @@
+name: fedwatch-daily-snapshot
+
+on:
+  schedule:
+    - cron: "15 21 * * 1-5"   # 06:15 KST 화~토 = 미장 마감 직후 가격 기록
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fedwatch
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compute FedWatch snapshot
+        run: node scripts/fedwatch_snapshot.mjs
+      - name: Commit history
+        run: |
+          git config user.name "fedwatch-bot"
+          git config user.email "actions@github.com"
+          git add data/fedwatch_history.json
+          git diff --cached --quiet && echo "no change" || git commit -m "fedwatch: daily snapshot"
+          git push

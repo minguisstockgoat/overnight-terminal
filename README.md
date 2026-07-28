@@ -23,6 +23,20 @@
 | COMMODITIES | WTI, 브렌트, 천연가스(HH/TTF), 금, 은, 구리 |
 | CRYPTO | BTC, ETH — Binance WebSocket 실시간 푸시 |
 | US TECH | NVDA, TSLA, SKHY(SK하이닉스 ADR), MU — 프리·애프터 포함 |
+| FED WATCH | 잔여 FOMC 회의별 인상/인하 확률 + 연말 누적 내재폭(bp) 추이 |
+
+## FED WATCH 패널
+
+CME FedWatch와 동일한 원리로 **30일 Fed Funds 선물(ZQ 월물)에서 직접 산출**한다
+(CME 사이트는 봇 차단이 심해 스크레이핑 대신 원데이터 계산 방식 채택).
+
+- 회의 전후 내재 EFFR 차이 ÷ 25bp → 인상/인하 확률 (월말 회의는 익월 월물, 월중 회의는 일수 가중 역산)
+- 실시간: 클라이언트가 60초마다 ZQ 월물 6~7개를 폴링해 재계산
+- 일별 이력: GitHub Actions(`fedwatch.yml`, 매영업일 06:15 KST)가 `scripts/fedwatch_snapshot.mjs`를 돌려
+  `data/fedwatch_history.json`에 기록 → 패널 우측 "연말 내재 변동폭(bp) 추이" 차트
+- **유지보수**: 연준이 금리를 바꾸거나 차년도 FOMC 일정이 나오면 `fomc.json`만 갱신
+  (기준금리가 오래되면 패널에 ⚠ 경고 표시됨). 계산 로직은 `app.js` `computeFedPath()`와
+  스냅샷 스크립트에 중복 구현 — 수정 시 둘 다 반영(KEEP IN SYNC).
 
 > **K200 야간선물**: KRX 야간파생(18:00~익일 06:00) 시세는 무료 실시간 피드가 없다.
 > 같은 시간대에 거래되는 **EWY(미국 상장 MSCI Korea ETF) + 원/달러**를 야간 방향 프록시로 쓰고,

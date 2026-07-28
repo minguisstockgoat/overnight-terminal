@@ -458,6 +458,194 @@ function initConvToggle() {
   });
 }
 
+/* ============================================================
+ * FED WATCH — CME FedWatch 방식 자체산출 (30일 Fed Funds 선물 ZQ)
+ * 확률 = 회의 전후 내재 EFFR 차이 / 25bp (scripts/fedwatch_snapshot.mjs와 KEEP IN SYNC)
+ * ============================================================ */
+const fed = { cfg: null, prices: {}, history: null };
+const ZQ_MONTH_CODE = ["F","G","H","J","K","M","N","Q","U","V","X","Z"];
+const zqSym = (y, m) => "ZQ" + ZQ_MONTH_CODE[m] + String(y % 100).padStart(2, "0") + ".CBT";
+const ymAdd = (y, m, k) => [y + Math.floor((m + k) / 12), (m + k) % 12];
+function nyToday() {
+  const p = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+  return p; // YYYY-MM-DD
+}
+function lastNonNull(arr) { if (!arr) return null; for (let i = arr.length - 1; i >= 0; i--) if (arr[i] != null) return arr[i]; return null; }
+
+function buildFedPanel() {
+  const sec = document.createElement("section");
+  sec.className = "panel"; sec.id = "panel-fed";
+  sec.innerHTML = `
+    <h2><span class="pno">08</span> FED WATCH · FOMC 금리 경로
+      <span class="pnote" id="fed-note">CME FedWatch 방식 자체산출(30일 FF선물)</span></h2>
+    <div id="fed-body">
+      <div id="fed-rows"><div class="fed-loading">Fed Funds 선물 수신 중…</div></div>
+      <div id="fed-side">
+        <div id="fed-anchor">—</div>
+        <div id="fed-cume">—</div>
+        <canvas id="fed-trend" width="252" height="72"></canvas>
+        <div id="fed-trend-cap">연말 내재 변동폭(bp) 추이 · 매영업일 아침 기록</div>
+      </div>
+    </div>`;
+  $("grid").appendChild(sec);
+}
+
+async function loadFedCfg() {
+  try {
+    fed.cfg = await (await fetch("fomc.json?v=" + Date.now())).json();
+    $("fed-note").textContent = `CME FedWatch 방식 자체산출(30일 FF선물) · 현행 ${fed.cfg.targetRange}`;
+  } catch (e) { fed.cfg = null; }
+  try { fed.history = await (await fetch("data/fedwatch_history.json?v=" + Date.now())).json(); } catch (e) { fed.history = null; }
+}
+
+function fedContractSyms() {
+  const now = new Date(), y = now.getUTCFullYear(), m = now.getUTCMonth();
+  const syms = [];
+  for (let k = 0; k <= 6; k++) { const [yy, mm] = ymAdd(y, m, k); syms.push(zqSym(yy, mm)); }
+  return syms;
+}
+
+async function refreshFed() {
+  if (!fed.cfg) return;
+  const syms = fedContractSyms();
+  const url = "https://query1.finance.yahoo.com/v8/finance/spark?symbols=" +
+    encodeURIComponent(syms.join(",")) + "&range=1d&interval=5m";
+  try {
+    const { data } = await proxyFetch(url);
+    const map = normalizeSpark(data);
+    for (const s of syms) {
+      const d = map[s];
+      const px = d && (lastNonNull(d.close) ?? d.previousClose);
+      if (px != null) fed.prices[s] = px;
+    }
+    renderFed();
+  } catch (e) { errCount++; }
+}
+
+/* 내재 금리 경로 계산 — snapshot 스크립트와 동일 로직 */
+function computeFedPath(cfg, prices, todayStr) {
+  const implied = ym => { const p = prices[zqSym(ym[0], ym[1])]; return p != null ? 100 - p : null; };
+  const meetings = cfg.meetings.map(x => ({ ...x, date: x.end }));
+  const future = meetings.filter(x => x.date >= todayStr);
+  const past = meetings.filter(x => x.date < todayStr);
+  const parseYm = s => [+s.slice(0, 4), +s.slice(5, 7) - 1];
+  const hasMeeting = ym => meetings.some(x => { const p = parseYm(x.date); return p[0] === ym[0] && p[1] === ym[1]; });
+
+  /* 기준(현행) EFFR: 직전 회의~다음 회의 사이의 회의 없는 달 월물, 없으면 당월 월물 */
+  const curYm = parseYm(todayStr);
+  let base = null, baseSrc = "";
+  const lastPast = past.length ? parseYm(past[past.length - 1].date) : null;
+  const firstFut = future.length ? parseYm(future[0].date) : null;
+  let scan = lastPast ? ymAdd(lastPast[0], lastPast[1], 1) : curYm;
+  if (scan[0] * 12 + scan[1] < curYm[0] * 12 + curYm[1]) scan = curYm;
+  const scanEnd = firstFut ? firstFut[0] * 12 + firstFut[1] : scan[0] * 12 + scan[1] + 2;
+  for (let i = scan[0] * 12 + scan[1]; i < scanEnd; i++) {
+    const ym = [Math.floor(i / 12), i % 12];
+    if (!hasMeeting(ym) && implied(ym) != null) { base = implied(ym); baseSrc = zqSym(ym[0], ym[1]); break; }
+  }
+  if (base == null && implied(curYm) != null) { base = implied(curYm); baseSrc = zqSym(curYm[0], curYm[1]) + "(당월근사)"; }
+  if (base == null) return null;
+
+  /* 회의별 체인 */
+  const rows = [];
+  let pre = base;
+  for (const mt of future) {
+    const [y, m] = parseYm(mt.date);
+    const day = +mt.date.slice(8, 10);
+    const N = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+    let post = null;
+    const next = ymAdd(y, m, 1);
+    if (N - day < 7 && !hasMeeting(next) && implied(next) != null) post = implied(next);       // 월말 회의 → 익월 월물
+    else if (implied([y, m]) != null) post = (implied([y, m]) * N - pre * day) / (N - day);     // 일수 가중 역산
+    else if (implied(next) != null && !hasMeeting(next)) post = implied(next);
+    if (post == null) continue;
+    const diff = post - pre;
+    const steps = Math.abs(diff) / 0.25, k = Math.floor(steps), frac = steps - k;
+    const dir = diff >= 0 ? 1 : -1;
+    const outcomes = [];   // {bp(부호 있는 이동폭), p}
+    if (k === 0) { outcomes.push({ bp: 0, p: 1 - frac }); outcomes.push({ bp: dir * 25, p: frac }); }
+    else { outcomes.push({ bp: dir * 25 * k, p: 1 - frac }); outcomes.push({ bp: dir * 25 * (k + 1), p: frac }); }
+    rows.push({ label: mt.label, date: mt.date, pre, post, diffBp: diff * 100, outcomes: outcomes.filter(o => o.p > 0.001) });
+    pre = post;
+  }
+  return { base, baseSrc, rows, endRate: pre, cumBp: (pre - base) * 100 };
+}
+
+function fedOutcomeName(bp) { return bp === 0 ? "동결" : (bp > 0 ? "+" + bp + "bp 인상" : bp + "bp 인하"); }
+function fedOutcomeClass(bp) { return bp === 0 ? "hold" : bp > 0 ? "hike" : "cut"; }
+
+function renderFed() {
+  if (!fed.cfg) return;
+  const path = computeFedPath(fed.cfg, fed.prices, nyToday());
+  const rowsEl = $("fed-rows");
+  if (!path) { rowsEl.innerHTML = '<div class="fed-loading">선물 시세 대기 중…</div>'; return; }
+
+  if (!path.rows.length) {
+    rowsEl.innerHTML = '<div class="fed-loading">남은 FOMC 일정 없음 — fomc.json에 차년도 일정을 추가하세요.</div>';
+  } else {
+    rowsEl.innerHTML = path.rows.map(r => {
+      const segs = r.outcomes
+        .sort((a, b) => Math.abs(a.bp) - Math.abs(b.bp))
+        .map(o => {
+          const pct = Math.round(o.p * 100);
+          const lbl = `${fedOutcomeName(o.bp)} ${pct}%`;
+          return `<span class="fed-seg ${fedOutcomeClass(o.bp)}" style="width:${(o.p * 100).toFixed(1)}%" title="${lbl}">${o.p >= 0.18 ? lbl : ""}</span>`;
+        }).join("");
+      const dcls = r.diffBp > 1 ? "hike-t" : r.diffBp < -1 ? "cut-t" : "";
+      return `<div class="fed-row">
+        <span class="fed-date">${r.label}</span>
+        <span class="fed-bar">${segs}</span>
+        <span class="fed-post">→ ${r.post.toFixed(2)}%</span>
+        <span class="fed-diff ${dcls}">${r.diffBp >= 0 ? "+" : ""}${r.diffBp.toFixed(0)}bp</span>
+      </div>`;
+    }).join("");
+  }
+
+  const warn = Math.abs(path.base - fed.cfg.targetMidPct) > 0.15 ? ' <span class="fed-warn">⚠ fomc.json 목표금리 갱신 필요</span>' : "";
+  $("fed-anchor").innerHTML = `현행 내재 EFFR <b>${path.base.toFixed(2)}%</b> <span class="fed-src">(${path.baseSrc})</span>${warn}`;
+  $("fed-cume").innerHTML = `연내 잔여회의 누적 내재 <b class="${path.cumBp > 1 ? "hike-t" : path.cumBp < -1 ? "cut-t" : ""}">${path.cumBp >= 0 ? "+" : ""}${path.cumBp.toFixed(0)}bp</b> → 연말 ${path.endRate.toFixed(2)}%`;
+  drawFedTrend(path);
+}
+
+function drawFedTrend(livePath) {
+  const cv = $("fed-trend");
+  if (!cv) return;
+  const g = cv.getContext("2d");
+  const dpr = window.devicePixelRatio || 1, W = 252, H = 72;
+  if (cv.width !== W * dpr) { cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + "px"; cv.style.height = H + "px"; }
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.clearRect(0, 0, W, H);
+  const pts = (fed.history && Array.isArray(fed.history.days) ? fed.history.days : [])
+    .map(d => ({ x: d.date, y: d.cumBp })).filter(p => p.y != null);
+  if (livePath) pts.push({ x: "live", y: livePath.cumBp });
+  if (pts.length < 2) {
+    g.fillStyle = "#5c5c66"; g.font = "10px monospace";
+    g.fillText("이력 수집 중 (매영업일 기록)", 8, 40);
+    return;
+  }
+  const ys = pts.map(p => p.y);
+  let lo = Math.min(0, ...ys), hi = Math.max(0, ...ys);
+  if (hi === lo) hi += 1;
+  const pad = (hi - lo) * 0.12; lo -= pad; hi += pad;
+  const X = i => i / (pts.length - 1) * (W - 8) + 4;
+  const Y = v => H - 4 - (v - lo) / (hi - lo) * (H - 8);
+  g.strokeStyle = "rgba(154,154,164,0.4)"; g.setLineDash([2, 3]); g.lineWidth = 1;
+  g.beginPath(); g.moveTo(0, Y(0)); g.lineTo(W, Y(0)); g.stroke(); g.setLineDash([]);
+  g.beginPath(); g.moveTo(X(0), Y(pts[0].y));
+  for (let i = 1; i < pts.length; i++) g.lineTo(X(i), Y(pts[i].y));
+  g.strokeStyle = "#ff9e1b"; g.lineWidth = 1.5; g.stroke();
+  const lp = pts[pts.length - 1];
+  g.beginPath(); g.arc(X(pts.length - 1), Y(lp.y), 2, 0, 7); g.fillStyle = "#ff9e1b"; g.fill();
+  g.fillStyle = "#9a9aa4"; g.font = "9px monospace";
+  g.fillText(`${lp.y >= 0 ? "+" : ""}${lp.y.toFixed(0)}bp`, Math.min(W - 34, X(pts.length - 1) + 4), Y(lp.y) - 4);
+}
+
+let fedTimer;
+async function loopFed() {
+  await refreshFed();
+  fedTimer = setTimeout(loopFed, document.hidden ? 300000 : 60000);
+}
+
 /* ── 메인 루프 ── */
 let sparkTimer, stockTimer;
 async function loopSpark() {
@@ -478,6 +666,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 buildGrid();
+buildFedPanel();
 initConvToggle();
 usSessionLabel();
 tickClock();
@@ -485,3 +674,4 @@ setInterval(tickClock, 1000);
 connectWS();
 loopSpark();
 loopStocks();
+loadFedCfg().then(loopFed);

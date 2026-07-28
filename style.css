@@ -157,6 +157,38 @@ body {
 #panel-notes li b { color: var(--amber); font-family: var(--mono); }
 
 /* ── status bar ──────────────────────────── */
+/* FED WATCH 패널 */
+#fed-body { display: flex; gap: 14px; padding: 10px; flex-wrap: wrap; }
+#fed-rows { flex: 1 1 380px; display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.fed-loading { color: var(--ink-3); font-size: 11px; padding: 8px 2px; }
+.fed-row {
+  display: grid; grid-template-columns: 46px 1fr 76px 52px;
+  align-items: center; gap: 8px; font-size: 11px;
+}
+.fed-date { color: var(--ink); font-weight: 700; }
+.fed-bar {
+  display: flex; height: 18px; background: #17171b;
+  border-radius: 2px; overflow: hidden; gap: 2px;
+}
+.fed-seg {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9.5px; white-space: nowrap; overflow: hidden;
+  color: #0b0b0d; font-weight: 700; min-width: 0;
+}
+.fed-seg.hold { background: #565b66; color: #d8d8de; }
+.fed-seg.hike { background: var(--amber); }
+.fed-seg.cut  { background: #4d94ff; }
+.fed-post { color: var(--ink-2); text-align: right; font-variant-numeric: tabular-nums; }
+.fed-diff { color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums; }
+.hike-t { color: var(--amber) !important; }
+.cut-t { color: #4d94ff !important; }
+#fed-side { flex: 0 0 260px; display: flex; flex-direction: column; gap: 6px; font-size: 10.5px; color: var(--ink-2); }
+#fed-side b { color: var(--ink); font-size: 12px; }
+.fed-src { color: var(--ink-3); font-size: 9px; }
+.fed-warn { color: var(--dn); font-size: 10px; }
+#fed-trend { background: #0b0b0e; border: 1px solid var(--border); border-radius: 2px; margin-top: 2px; }
+#fed-trend-cap { color: var(--ink-3); font-size: 9px; }
+
 #statusbar {
   grid-area: foot;
   display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
