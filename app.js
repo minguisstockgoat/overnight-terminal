@@ -287,7 +287,8 @@ function renderTile(sym, flashDir) {
 
   /* 하단: 전일/고저/갱신시각 */
   const parts = [];
-  if (s.prev != null) parts.push("전일 " + fmt(s.prev, c.dec));
+  if (c.ws && s.srcLive && s.wsOpen24 != null) parts.push("24h시가 " + fmt(s.wsOpen24, c.dec));
+  else if (s.prev != null) parts.push("전일 " + fmt(s.prev, c.dec));
   if (s.px.length > 1) {
     parts.push("저 " + fmt(Math.min(...s.px), c.dec));
     parts.push("고 " + fmt(Math.max(...s.px), c.dec));
