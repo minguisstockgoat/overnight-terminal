@@ -1,0 +1,28 @@
+name: ice-cds-daily-snapshot
+
+on:
+  schedule:
+    - cron: "30 21 * * 1-5" # 06:30 KST, ICE 전일 EOD 반영 뒤
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ice-cds
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch ICE CDS settlement prices
+        run: node scripts/ice_cds_snapshot.mjs
+      - name: Commit snapshot
+        run: |
+          git config user.name "ice-cds-bot"
+          git config user.email "actions@github.com"
+          git add data/ice_cds.json
+          git diff --cached --quiet && echo "no change" || git commit -m "cds: daily ICE settlement snapshot"
+          git push

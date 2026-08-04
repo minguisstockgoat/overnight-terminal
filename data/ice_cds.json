@@ -1,0 +1,26 @@
+{
+ "source": "ICE Clear Credit",
+ "sourceUrl": "https://status.ice.com/cds-settlement-prices/icc/single-name-instruments",
+ "updatedAt": "2026-08-04T02:56:55.317Z",
+ "note": "ICE 공개값은 5Y CDS EOD Price이며 par CDS spread(bp)가 아닙니다. 가격 하락은 통상 신용 프리미엄 확대로 해석합니다.",
+ "items": [
+  {
+   "ticker": "COREWEI",
+   "name": "CoreWeave",
+   "couponBp": 500,
+   "instrument": "COREWEI.SNRFOR.USD.XR14.500.2031-06-20",
+   "clearingDate": "2026-08-03",
+   "eodPrice": 90.9761,
+   "previousEodPrice": null
+  },
+  {
+   "ticker": "ORCLE",
+   "name": "Oracle",
+   "couponBp": 100,
+   "instrument": "ORCLE.SNRFOR.USD.XR14.100.2031-06-20",
+   "clearingDate": "2026-08-03",
+   "eodPrice": 95.9542,
+   "previousEodPrice": null
+  }
+ ]
+}

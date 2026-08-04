@@ -472,11 +472,48 @@ function nyToday() {
 }
 function lastNonNull(arr) { if (!arr) return null; for (let i = arr.length - 1; i >= 0; i--) if (arr[i] != null) return arr[i]; return null; }
 
+function buildCdsPanel() {
+  const sec = document.createElement("section");
+  sec.className = "panel"; sec.id = "panel-cds";
+  sec.innerHTML = `
+    <h2><span class="pno">08</span> AI NEOCLOUD · CDS<span class="pnote" id="cds-note">ICE Clear Credit · 5Y EOD</span></h2>
+    <div class="tiles" id="cds-tiles"><div class="fed-loading">ICE CDS 스냅샷 불러오는 중…</div></div>`;
+  $("grid").appendChild(sec);
+}
+
+function renderCds(snapshot) {
+  const target = $("cds-tiles");
+  if (!snapshot?.items?.length) throw new Error("empty CDS snapshot");
+  const date = snapshot.items[0].clearingDate || "—";
+  $("cds-note").textContent = `ICE Clear Credit · ${date} EOD`;
+  target.innerHTML = snapshot.items.map(item => {
+    const previous = item.previousEodPrice;
+    const change = previous == null ? null : item.eodPrice - previous;
+    const direction = change == null ? "flat" : change > 0 ? "up" : change < 0 ? "dn" : "flat";
+    const changeText = change == null ? "전일 비교 대기" : `${change > 0 ? "+" : ""}${change.toFixed(4)} vs 전일`;
+    return `<article class="tile cds-tile">
+      <div class="t-head"><span class="t-name">${item.name} 5Y CDS</span><span class="t-sym">${item.ticker}</span><span class="t-badge">ICE EOD</span></div>
+      <div class="t-main"><div class="t-left"><div class="t-px">${fmt(item.eodPrice, 4)}<span class="t-unit">price</span></div><div class="t-chg ${direction}">${changeText}</div></div></div>
+      <div class="t-foot"><span>${date}</span><span>coupon ${item.couponBp}bp</span><span>가격↓ = 프리미엄↑</span></div>
+    </article>`;
+  }).join("");
+}
+
+async function loadCds() {
+  try {
+    const response = await fetch("data/ice_cds.json?v=" + Date.now());
+    if (!response.ok) throw new Error("snapshot unavailable");
+    renderCds(await response.json());
+  } catch (error) {
+    $("cds-tiles").innerHTML = `<div class="fed-loading">ICE CDS 스냅샷을 불러오지 못했습니다.</div>`;
+  }
+}
+
 function buildFedPanel() {
   const sec = document.createElement("section");
   sec.className = "panel"; sec.id = "panel-fed";
   sec.innerHTML = `
-    <h2><span class="pno">08</span> FED WATCH · FOMC 금리 경로
+    <h2><span class="pno">09</span> FED WATCH · FOMC 금리 경로
       <span class="pnote" id="fed-note">CME FedWatch 방식 자체산출(30일 FF선물)</span></h2>
     <div id="fed-body">
       <div id="fed-rows"><div class="fed-loading">Fed Funds 선물 수신 중…</div></div>
@@ -666,6 +703,7 @@ document.addEventListener("visibilitychange", () => {
 });
 
 buildGrid();
+buildCdsPanel();
 buildFedPanel();
 initConvToggle();
 usSessionLabel();
@@ -675,3 +713,4 @@ connectWS();
 loopSpark();
 loopStocks();
 loadFedCfg().then(loopFed);
+loadCds();
