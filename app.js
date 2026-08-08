@@ -16,11 +16,15 @@ const PROXIES = [
 let proxyIdx = 0;          // 마지막으로 성공한 프록시에 고정
 let errCount = 0;
 
+/* K200 야간선물 릴레이 엔드포인트 (worker/k200-night 배포 주소).
+ * Mac mini가 KIS 웹소켓에서 받은 시세를 이 Worker에 밀어 넣고, 여기서는 읽기만 한다. */
+const K200_NIGHT_URL = "https://k200-night.eogks879.workers.dev/";
+
 /* ── 심볼 구성 ─────────────────────────────────────────────
  * mode "spark" = 배치 spark 폴링 / "stock" = 개별 chart(프리·애프터 포함)
  * yld=true → 금리: 등락을 bp로 표시  */
 const PANELS = [
-  { id: "kr", no: "01", title: "KOREA · OVERNIGHT PROXY", note: "K200 야간선물(18~06시) 무료 실시간 피드 부재 → EWY·원/달러로 야간 방향 추정" },
+  { id: "kr", no: "01", title: "KOREA · OVERNIGHT", note: "K200 야간선물=KRX 실물(18~06시) · EWY·원/달러는 보조 지표" },
   { id: "eq", no: "02", title: "EQUITY FUTURES & VOL",    note: "CME 24h" },
   { id: "rt", no: "03", title: "RATES · 금리",             note: "현물수익률=미장 / 국채선물=24h" },
   { id: "fx", no: "04", title: "FX · 환율",                note: "24h" },
@@ -31,8 +35,9 @@ const PANELS = [
 
 const SYMBOLS = [
   /* KOREA */
+  { sym: "K200N",    name: "코스피200 야간선물", panel: "kr", dec: 2, mode: "relay", badge: "KRX 야간" },
   { sym: "KRW=X",    name: "원/달러",           panel: "kr", dec: 2, mode: "spark" },
-  { sym: "EWY",      name: "MSCI Korea (EWY)",  panel: "kr", dec: 2, mode: "stock", badge: "K200 야간 프록시" },
+  { sym: "EWY",      name: "MSCI Korea (EWY)",  panel: "kr", dec: 2, mode: "stock", badge: "야간 보조" },
   { sym: "^KS200",   name: "KOSPI 200",         panel: "kr", dec: 2, mode: "spark", badge: "주간장" },
   { sym: "^KS11",    name: "KOSPI",             panel: "kr", dec: 2, mode: "spark", badge: "주간장" },
   /* EQUITY FUTURES & VOL */
@@ -678,6 +683,51 @@ function drawFedTrend(livePath) {
 }
 
 let fedTimer;
+/* ── K200 야간선물 ───────────────────────────────────────────
+ * KIS는 야간 시세를 REST로 주지 않고 실시간 웹소켓으로만 흘려준다. 그래서 Mac mini의
+ * scripts/k200_night_relay.mjs 가 웹소켓을 물고 있다가 Worker로 밀어 넣고, 여기서는 그걸 읽는다.
+ * 엔드포인트가 죽어 있어도 나머지 타일은 그대로 돈다(이 타일만 '수신 실패'). */
+async function refreshNight() {
+  const s = state["K200N"];
+  const bd = $("badge-K200N");
+  try {
+    const r = await fetch(K200_NIGHT_URL + "?t=" + Date.now(), { cache: "no-store" });
+    if (!r.ok) throw new Error("http " + r.status);
+    const d = await r.json();
+    if (typeof d.price !== "number") throw new Error("no price");
+
+    const prevLast = s.last;
+    s.last = d.price;
+    s.prev = d.dayClose ?? s.prev;          // 야간 등락 기준 = 같은 종목의 주간 정규장 종가
+    s.updated = Date.parse(d.ts) || Date.now();
+    s.err = false;
+
+    /* 스파크라인: 릴레이가 들고 있는 1분 시계열을 그대로 쓴다(페이지 새로 열어도 바로 그려짐) */
+    if (Array.isArray(d.series) && d.series.length) {
+      s.ts = d.series.map(p => p[0]);
+      s.px = d.series.map(p => p[1]);
+    } else if (s.px[s.px.length - 1] !== d.price) {
+      s.px.push(d.price); s.ts.push(Math.floor(Date.now() / 1000));
+    }
+
+    if (bd) {
+      const label = d.stale ? "STALE" : d.session === "closed" ? "마감" : "LIVE";
+      bd.textContent = label;
+      bd.className = "t-badge" + (label === "LIVE" ? " live" : "");
+    }
+    renderTile("K200N", prevLast == null || d.price === prevLast ? null : d.price > prevLast ? "up" : "dn");
+  } catch {
+    s.err = true;
+    if (bd) { bd.textContent = "OFF"; bd.className = "t-badge"; }
+    renderTile("K200N");
+  }
+}
+let nightTimer;
+async function loopNight() {
+  await refreshNight();
+  nightTimer = setTimeout(loopNight, document.hidden ? 120000 : 20000);
+}
+
 async function loopFed() {
   await refreshFed();
   fedTimer = setTimeout(loopFed, document.hidden ? 300000 : 60000);
@@ -697,8 +747,8 @@ async function loopStocks() {
 }
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) {
-    clearTimeout(sparkTimer); clearTimeout(stockTimer);
-    loopSpark(); loopStocks();
+    clearTimeout(sparkTimer); clearTimeout(stockTimer); clearTimeout(nightTimer);
+    loopSpark(); loopStocks(); loopNight();
   }
 });
 
@@ -712,5 +762,6 @@ setInterval(tickClock, 1000);
 connectWS();
 loopSpark();
 loopStocks();
+loopNight();
 loadFedCfg().then(loopFed);
 loadCds();
