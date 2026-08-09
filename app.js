@@ -402,6 +402,13 @@ function tzParts(tz) {
 }
 const WDN = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
 
+/* KRX 야간파생 18:00~익일 06:00 KST (월 18시 ~ 토 06시) */
+function krxNightOpen() {
+  const sel = tzParts("Asia/Seoul");
+  const d = WDN[sel.wd], min = sel.h * 60 + sel.m;
+  return (min >= 1080 && d >= 1 && d <= 5) || (min < 360 && d >= 2 && d <= 6);
+}
+
 function tickClock() {
   const sel = tzParts("Asia/Seoul"), nyc = tzParts("America/New_York"), utc = tzParts("UTC");
   usSessionLabel();
@@ -410,9 +417,7 @@ function tickClock() {
   $("clock-utc").textContent = utc.str;
 
   const badges = [];
-  /* KRX 야간파생 18:00~익일 06:00 KST (월18시~토06시) */
-  const kd = WDN[sel.wd], kmin = sel.h * 60 + sel.m;
-  const krxNight = (kmin >= 1080 && kd >= 1 && kd <= 5) || (kmin < 360 && kd >= 2 && kd <= 6);
+  const krxNight = krxNightOpen();
   badges.push(`<span class="badge ${krxNight ? "on" : ""}">KRX 야간 ${krxNight ? "OPEN" : "CLOSED"}</span>`);
   /* 미국 현물장 */
   badges.push(`<span class="badge ${usSess === "정규장" ? "on" : usSess === "CLOSED" ? "" : "pre"}">US ${usSess}</span>`);
@@ -717,8 +722,11 @@ async function refreshNight() {
     }
     renderTile("K200N", prevLast == null || d.price === prevLast ? null : d.price > prevLast ? "up" : "dn");
   } catch {
-    s.err = true;
-    if (bd) { bd.textContent = "OFF"; bd.className = "t-badge"; }
+    /* 야간장이 닫혀 있을 때(주간·주말) 값이 없는 건 정상이다 — 고장처럼 보이지 않게 CLOSED 로 둔다.
+       장중인데 못 받아오면 그때는 진짜 이상이므로 OFF + '수신 실패'. */
+    const open = krxNightOpen();
+    s.err = open;
+    if (bd) { bd.textContent = open ? "OFF" : "CLOSED"; bd.className = "t-badge"; }
     renderTile("K200N");
   }
 }

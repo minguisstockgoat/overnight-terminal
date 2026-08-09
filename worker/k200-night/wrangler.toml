@@ -2,9 +2,9 @@ name = "k200-night"
 main = "src/worker.mjs"
 compatibility_date = "2026-08-01"
 
-# npx wrangler kv namespace create K200 로 만든 뒤 출력된 id 를 여기에 채운다.
+# npx wrangler kv namespace create K200 로 만든 것. (네임스페이스 id 는 비밀값이 아니다)
 [[kv_namespaces]]
 binding = "K200"
-id = "PUT_KV_NAMESPACE_ID_HERE"
+id = "8eedd21723054d4c841bfe34236d4c5b"
 
 # RELAY_TOKEN 은 코드/설정에 두지 않는다 — npx wrangler secret put RELAY_TOKEN
