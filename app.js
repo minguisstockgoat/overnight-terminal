@@ -191,6 +191,20 @@ function normalizeSpark(j) {
   return j || {};
 }
 
+/* 미 개별주 등락 기준선.
+   프리/애프터장에서 Yahoo meta.previousClose(=chartPreviousClose)는 "마지막 정규장의 전일" 종가라
+   하루 밀려서(전전일 종가) 온다. 이때 기준선은 마지막 정규장 종가 = meta.regularMarketPrice.
+   정규장 중에는 regularMarketPrice가 현재가이므로 chartPreviousClose를 그대로 쓴다. */
+function stockBaseline(meta, timestamp) {
+  const prev = meta.chartPreviousClose ?? meta.previousClose;
+  const reg = meta.currentTradingPeriod && meta.currentTradingPeriod.regular;
+  const lastTs = (timestamp && timestamp.length ? timestamp[timestamp.length - 1] : null)
+    ?? Math.floor(Date.now() / 1000);
+  if (!reg || meta.regularMarketPrice == null) return prev;
+  const offHours = lastTs < reg.start || lastTs >= reg.end;
+  return offHours ? meta.regularMarketPrice : prev;
+}
+
 async function refreshStocks() {
   const stocks = SYMBOLS.filter(c => c.mode === "stock");
   let okAny = false;
@@ -205,7 +219,7 @@ async function refreshStocks() {
       applySeries(c.sym, {
         timestamp: r.timestamp,
         close: r.indicators.quote[0].close,
-        previousClose: r.meta.chartPreviousClose ?? r.meta.previousClose,
+        previousClose: stockBaseline(r.meta, r.timestamp),
         rmp: r.meta.regularMarketPrice,
       }, proxy);
     } catch (e) {
