@@ -500,7 +500,7 @@ function buildCdsPanel() {
   const sec = document.createElement("section");
   sec.className = "panel"; sec.id = "panel-cds";
   sec.innerHTML = `
-    <h2><span class="pno">08</span> AI NEOCLOUD · CDS<span class="pnote" id="cds-note">ICE Clear Credit · 5Y EOD</span></h2>
+    <h2><span class="pno">08</span> AI CAPEX CREDIT · CDS<span class="pnote" id="cds-note">ICE Clear Credit · 5Y EOD</span></h2>
     <div class="tiles" id="cds-tiles"><div class="fed-loading">ICE CDS 스냅샷 불러오는 중…</div></div>`;
   $("grid").appendChild(sec);
 }
@@ -509,16 +509,31 @@ function renderCds(snapshot) {
   const target = $("cds-tiles");
   if (!snapshot?.items?.length) throw new Error("empty CDS snapshot");
   const date = snapshot.items[0].clearingDate || "—";
-  $("cds-note").textContent = `ICE Clear Credit · ${date} EOD`;
-  target.innerHTML = snapshot.items.map(item => {
-    const previous = item.previousEodPrice;
-    const change = previous == null ? null : item.eodPrice - previous;
-    const direction = change == null ? "flat" : change > 0 ? "up" : change < 0 ? "dn" : "flat";
-    const changeText = change == null ? "전일 비교 대기" : `${change > 0 ? "+" : ""}${change.toFixed(4)} vs 전일`;
+  const model = snapshot.model;
+  $("cds-note").textContent = `ICE Clear Credit · ${date} EOD · par spread 환산`
+    + (model ? ` (R=${(model.recovery * 100).toFixed(0)}% · r=${(model.discountRate * 100).toFixed(2)}% · 잔차 ${model.residualBp ?? "—"}bp)` : "");
+
+  /* 스프레드 넓은 순 = 크레딧 약한 순 */
+  const items = [...snapshot.items].sort((a, b) => (b.spreadBp ?? -1) - (a.spreadBp ?? -1));
+  target.innerHTML = items.map(item => {
+    /* 등락은 스프레드 기준. 확대=신용악화라 하락색, 축소=개선이라 상승색으로 칠한다. */
+    const change = item.spreadBp == null || item.previousSpreadBp == null ? null : item.spreadBp - item.previousSpreadBp;
+    const direction = change == null || change === 0 ? "flat" : change > 0 ? "dn" : "up";
+    const changeText = change == null
+      ? "전일 비교 대기"
+      : `${change > 0 ? "▲ +" : change < 0 ? "▼ " : "― "}${change.toFixed(1)}bp ${change > 0 ? "확대" : change < 0 ? "축소" : ""}`;
+    const priceChange = item.previousEodPrice == null ? null : item.eodPrice - item.previousEodPrice;
     return `<article class="tile cds-tile">
-      <div class="t-head"><span class="t-name">${item.name} 5Y CDS</span><span class="t-sym">${item.ticker}</span><span class="t-badge">ICE EOD</span></div>
-      <div class="t-main"><div class="t-left"><div class="t-px">${fmt(item.eodPrice, 4)}<span class="t-unit">price</span></div><div class="t-chg ${direction}">${changeText}</div></div></div>
-      <div class="t-foot"><span>${date}</span><span>coupon ${item.couponBp}bp</span><span>가격↓ = 프리미엄↑</span></div>
+      <div class="t-head"><span class="t-name">${item.name} 5Y CDS</span><span class="t-sym">${item.ticker}</span><span class="t-badge">${item.tag || "ICE EOD"}</span></div>
+      <div class="t-main"><div class="t-left">
+        <div class="t-px">${item.spreadBp == null ? "—" : fmt(item.spreadBp, 1)}<span class="t-unit">bp</span></div>
+        <div class="t-chg ${direction}">${changeText}</div>
+      </div></div>
+      <div class="t-foot">
+        <span>가격 ${fmt(item.eodPrice, 2)}${priceChange == null ? "" : ` (${priceChange > 0 ? "+" : ""}${priceChange.toFixed(2)})`}</span>
+        <span>coupon ${item.couponBp}bp</span>
+        <span>확대=신용악화</span>
+      </div>
     </article>`;
   }).join("");
 }
