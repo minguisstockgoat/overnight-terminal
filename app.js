@@ -158,8 +158,10 @@ async function refreshSpark() {
   const batches = chunk(sparkSyms, 15);   // Yahoo spark는 심볼 수 제한이 있어 15개씩
   let okAny = false;
   for (const b of batches) {
+    /* range=1d는 선물의 거래일이 막 바뀐 직후(00~04시 ET) 빈 배열로 온다 —
+       2d로 받아 최근 24시간만 잘라 쓴다. previousClose는 1d와 동일하게 온다. */
     const url = "https://query1.finance.yahoo.com/v8/finance/spark?symbols=" +
-      encodeURIComponent(b.join(",")) + "&range=1d&interval=5m";
+      encodeURIComponent(b.join(",")) + "&range=2d&interval=5m";
     try {
       const { data, proxy } = await proxyFetch(url);
       okAny = true;
@@ -236,6 +238,13 @@ function applySeries(sym, d, proxy) {
   const ts = [], px = [];
   for (let i = 0; i < d.close.length; i++) {
     if (d.close[i] != null) { ts.push(d.timestamp[i]); px.push(d.close[i]); }
+  }
+  /* 최근 24시간만 유지 (spark는 2d로 받는다) */
+  if (ts.length) {
+    const cut = ts[ts.length - 1] - 86400;
+    let from = 0;
+    while (from < ts.length && ts[from] < cut) from++;
+    if (from > 0) { ts.splice(0, from); px.splice(0, from); }
   }
   if (!px.length && d.rmp == null) { s.err = true; renderTile(sym); return; }
   const conf = SYMBOLS.find(c => c.sym === sym);
@@ -642,8 +651,9 @@ function fedContractSyms() {
 async function refreshFed() {
   if (!fed.cfg) return;
   const syms = fedContractSyms();
+  /* ZQ 월물도 거래일 전환 직후 1d가 비므로 2d로 받는다 */
   const url = "https://query1.finance.yahoo.com/v8/finance/spark?symbols=" +
-    encodeURIComponent(syms.join(",")) + "&range=1d&interval=5m";
+    encodeURIComponent(syms.join(",")) + "&range=2d&interval=5m";
   try {
     const { data } = await proxyFetch(url);
     const map = normalizeSpark(data);
