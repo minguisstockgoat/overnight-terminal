@@ -1,0 +1,32 @@
+name: finra-credit-daily-snapshot
+
+on:
+  schedule:
+    - cron: "45 21 * * 1-5" # 06:45 KST, TRACE 전일 집계 반영 뒤
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: finra-credit
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch FINRA TRACE credit tape
+        env:
+          FINRA_CLIENT_ID: ${{ secrets.FINRA_CLIENT_ID }}
+          FINRA_CLIENT_SECRET: ${{ secrets.FINRA_CLIENT_SECRET }}
+        run: node scripts/finra_credit_snapshot.mjs
+      - name: Commit snapshot
+        run: |
+          git config user.name "finra-credit-bot"
+          git config user.email "actions@github.com"
+          git add data/finra_credit.json
+          git diff --cached --quiet && echo "no change" || git commit -m "credit: daily FINRA TRACE snapshot"
+          git pull --rebase origin main
+          git push

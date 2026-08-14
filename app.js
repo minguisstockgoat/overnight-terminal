@@ -538,6 +538,64 @@ function renderCds(snapshot) {
   }).join("");
 }
 
+/* ── 크레딧 테이프 (FINRA TRACE 시장 집계) ── */
+function buildCreditPanel() {
+  const sec = document.createElement("section");
+  sec.className = "panel"; sec.id = "panel-credit";
+  sec.innerHTML = `
+    <h2><span class="pno">09</span> CREDIT TAPE<span class="pnote" id="credit-note">FINRA TRACE · 시장 전체 집계</span></h2>
+    <div class="tiles" id="credit-tiles"><div class="fed-loading">TRACE 스냅샷 불러오는 중…</div></div>`;
+  $("grid").appendChild(sec);
+}
+
+/* TRACE 금액은 백만 달러 단위로 온다 */
+const bn = v => v == null ? "—" : v >= 1000 ? `$${(v / 1000).toFixed(1)}bn` : `$${Math.round(v)}mn`;
+
+function renderCredit(snapshot) {
+  const target = $("credit-tiles");
+  if (!snapshot?.segments?.length) throw new Error("empty credit snapshot");
+  $("credit-note").textContent = `FINRA TRACE · ${snapshot.latestDate} · 개별 발행사 아님(시장 집계)`;
+
+  target.innerHTML = snapshot.segments.map((seg, i) => {
+    /* A/D = 상승종목수 ÷ 하락종목수. 1.0 위면 크레딧 강세 */
+    const change = seg.prevAdRatio == null ? null : seg.adRatio - seg.prevAdRatio;
+    const direction = change == null || change === 0 ? "flat" : change > 0 ? "up" : "dn";
+    const changeText = change == null ? "전일 비교 대기"
+      : `${change > 0 ? "▲ +" : "▼ "}${change.toFixed(2)} vs 전일 ${seg.prevAdRatio.toFixed(2)}`;
+    const net = seg.netCustomerUsdMn;
+    return `<article class="tile credit-tile">
+      <div class="t-head"><span class="t-name">${seg.label} A/D</span><span class="t-sym">${seg.advances}↑ ${seg.declines}↓</span><span class="t-badge">${seg.market === "144a" ? "144A" : "TRACE"}</span></div>
+      <div class="t-main">
+        <div class="t-left">
+          <div class="t-px">${fmt(seg.adRatio, 2)}<span class="t-unit">A/D</span></div>
+          <div class="t-chg ${direction}">${changeText}</div>
+        </div>
+        <div class="t-spark"><canvas id="spk-CREDIT_${i}" width="118" height="40"></canvas></div>
+      </div>
+      <div class="t-foot">
+        <span>신고 ${seg.high52} · 신저 ${seg.low52}</span>
+        <span>거래 ${bn(seg.volumeUsdMn)}</span>
+        <span>${net == null ? "고객수급 —" : `고객 순매수 ${net >= 0 ? "+" : "−"}${bn(Math.abs(net))}`}</span>
+      </div>
+    </article>`;
+  }).join("");
+
+  /* 스파크라인: 기준선 1.0(상승=하락) 위아래로 색이 갈린다 */
+  snapshot.segments.forEach((seg, i) => {
+    drawSpark({ sym: "CREDIT_" + i, dec: 2 }, { px: seg.history.map(h => h.adRatio), prev: 1, ts: [] });
+  });
+}
+
+async function loadCredit() {
+  try {
+    const response = await fetch("data/finra_credit.json?v=" + Date.now());
+    if (!response.ok) throw new Error("snapshot unavailable");
+    renderCredit(await response.json());
+  } catch (error) {
+    $("credit-tiles").innerHTML = `<div class="fed-loading">TRACE 스냅샷을 불러오지 못했습니다.</div>`;
+  }
+}
+
 async function loadCds() {
   try {
     const response = await fetch("data/ice_cds.json?v=" + Date.now());
@@ -552,7 +610,7 @@ function buildFedPanel() {
   const sec = document.createElement("section");
   sec.className = "panel"; sec.id = "panel-fed";
   sec.innerHTML = `
-    <h2><span class="pno">09</span> FED WATCH · FOMC 금리 경로
+    <h2><span class="pno">10</span> FED WATCH · FOMC 금리 경로
       <span class="pnote" id="fed-note">CME FedWatch 방식 자체산출(30일 FF선물)</span></h2>
     <div id="fed-body">
       <div id="fed-rows"><div class="fed-loading">Fed Funds 선물 수신 중…</div></div>
@@ -791,6 +849,7 @@ document.addEventListener("visibilitychange", () => {
 
 buildGrid();
 buildCdsPanel();
+buildCreditPanel();
 buildFedPanel();
 initConvToggle();
 usSessionLabel();
@@ -802,3 +861,4 @@ loopStocks();
 loopNight();
 loadFedCfg().then(loopFed);
 loadCds();
+loadCredit();
