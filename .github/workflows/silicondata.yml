@@ -1,0 +1,29 @@
+name: silicondata-daily-snapshot
+
+on:
+  schedule:
+    # 09:20 KST — Silicon Data는 UTC 기준 전일치를 아침에 확정 게시한다
+    - cron: "20 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: silicondata
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scrape Silicon Data public index embeds
+        run: node scripts/silicondata_snapshot.mjs
+      - name: Commit snapshot
+        run: |
+          git config user.name "silicondata-bot"
+          git config user.email "actions@github.com"
+          git add data/silicondata.json
+          git diff --cached --quiet && echo "no change" || git commit -m "silicondata: daily index snapshot"
+          git push

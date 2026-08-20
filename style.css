@@ -226,3 +226,15 @@ body {
   .tiles { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
   .t-px { font-size: 18px; }
 }
+
+/* SILICON DATA 패널 */
+#sd-fwd { padding: 8px 10px 10px; border-top: 1px solid var(--border); }
+#sd-fwd-canvas { display: block; background: #0b0b0e; border: 1px solid var(--border); border-radius: 2px; }
+#sd-fwd-legend { margin-top: 5px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 10px; color: var(--ink-2); }
+.sd-leg { display: inline-flex; align-items: center; gap: 4px; font-variant-numeric: tabular-nums; }
+.sd-leg i { width: 8px; height: 2px; display: inline-block; }
+.sd-leg b { color: var(--ink); font-weight: 600; }
+.sd-leg em { font-style: normal; }
+.sd-leg em.up { color: var(--up); }
+.sd-leg em.dn { color: var(--dn); }
+.sd-leg-cap { color: var(--ink-3); font-size: 9px; margin-left: auto; }

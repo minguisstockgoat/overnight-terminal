@@ -857,10 +857,164 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
+/* ============================================================
+ * SILICON DATA — AI 컴퓨트·LLM 토큰 지수
+ * silicondata.com 공개 임베드 차트를 Actions가 매일 긁어 data/silicondata.json에 누적.
+ * 임베드가 7일 창만 주기 때문에 과거치는 살 수 없고, 스냅샷이 쌓는 만큼만 길어진다.
+ * (scripts/silicondata_snapshot.mjs)
+ * ============================================================ */
+const SD_ORDER = [
+  "token_all", "token_open", "token_closed",
+  "gpu_h100_neo", "gpu_h100_hs", "gpu_b200", "gpu_h200",
+  "gpu_a100_neo", "gpu_a100_hs", "gpu_mi300x", "ram_gddr6",
+];
+const SD_FWD_COLORS = { H100: "#ff9e1b", B200: "#38bdf8", A100: "#c084fc" };
+
+function buildSiliconPanel() {
+  const sec = document.createElement("section");
+  sec.className = "panel"; sec.id = "panel-sd";
+  sec.innerHTML = `
+    <h2><span class="pno">11</span> SILICON DATA · AI 컴퓨트 &amp; 토큰
+      <span class="pnote" id="sd-note">silicondata.com 공개 지수 · 일간</span></h2>
+    <div class="tiles" id="sd-tiles"><div class="fed-loading">Silicon Data 스냅샷 불러오는 중…</div></div>
+    <div id="sd-fwd">
+      <canvas id="sd-fwd-canvas" height="150"></canvas>
+      <div id="sd-fwd-legend"></div>
+    </div>`;
+  $("grid").appendChild(sec);
+}
+
+function renderSilicon(snap) {
+  const target = $("sd-tiles");
+  const keys = SD_ORDER.filter(k => snap?.series?.[k]?.history);
+  if (!keys.length) throw new Error("empty silicondata snapshot");
+
+  $("sd-note").textContent =
+    `silicondata.com 공개 지수 · ${snap.latestDate} 기준 · 히스토리 누적 ${sdSpan(snap)}일`;
+
+  const rows = keys.map(key => {
+    const s = snap.series[key];
+    const dates = Object.keys(s.history).sort();
+    const px = dates.map(d => s.history[d]);
+    const last = px[px.length - 1], prev = px.length > 1 ? px[px.length - 2] : null;
+    /* 7일 전 대비 — 아직 7개가 안 쌓였으면 가장 오래된 값 기준 */
+    const back = px[Math.max(0, px.length - 8)];
+    return { key, s, dates, px, last, prev, back };
+  });
+
+  target.innerHTML = rows.map(r => {
+    const dec = r.last >= 100 ? 1 : r.last >= 10 ? 2 : 4;
+    const chg = r.prev == null ? null : (r.last / r.prev - 1) * 100;
+    const dir = chg == null || Math.abs(chg) < 0.005 ? "flat" : chg > 0 ? "up" : "dn";
+    const chgText = chg == null ? "전일 비교 대기"
+      : `${chg > 0 ? "▲ +" : chg < 0 ? "▼ −" : ""}${Math.abs(chg).toFixed(2)}%`;
+    const wk = r.back == null || r.back === r.last ? null : (r.last / r.back - 1) * 100;
+    return `<article class="tile sd-tile">
+      <div class="t-head">
+        <span class="t-name" title="${r.s.label}">${r.s.label}</span>
+        <span class="t-badge">${r.s.badge || ""}</span>
+      </div>
+      <div class="t-main">
+        <div class="t-left">
+          <div class="t-px">${fmt(r.last, dec)}<span class="t-unit">${r.s.unit || ""}</span></div>
+          <div class="t-chg ${dir}">${chgText}</div>
+        </div>
+        <div class="t-spark"><canvas id="spk-SD_${r.key}" width="118" height="40"></canvas></div>
+      </div>
+      <div class="t-foot">
+        <span>${wk == null ? "누적 대기" : `${r.px.length - 1}일 ${wk >= 0 ? "+" : "−"}${Math.abs(wk).toFixed(1)}%`}</span>
+        <span>n=${r.px.length}</span>
+        <span>${r.dates[r.dates.length - 1]}</span>
+      </div>
+    </article>`;
+  }).join("");
+
+  rows.forEach(r => drawSpark({ sym: "SD_" + r.key, dec: 4 }, { px: r.px, prev: r.prev, ts: [] }));
+  drawForwardCurve(snap.forward);
+}
+
+/* 누적된 시계열 길이(가장 긴 시리즈 기준) */
+function sdSpan(snap) {
+  return Math.max(...Object.values(snap.series || {}).map(s => Object.keys(s.history || {}).length), 0);
+}
+
+/* GPU 렌탈 포워드 커브: 0~36개월 term rate.
+   우하향이면 백워데이션(시장이 향후 렌탈가 하락을 반영) */
+function drawForwardCurve(forward) {
+  const cv = $("sd-fwd-canvas");
+  const legend = $("sd-fwd-legend");
+  if (!cv || !forward?.curves) return;
+  const gpus = Object.keys(forward.curves).filter(g => forward.curves[g]?.length);
+  if (!gpus.length) return;
+
+  const dpr = window.devicePixelRatio || 1;
+  const W = Math.max(320, cv.parentElement.clientWidth - 20), H = 150;
+  cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + "px"; cv.style.height = H + "px";
+  const g = cv.getContext("2d");
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.clearRect(0, 0, W, H);
+
+  const L = 40, R = 8, T = 10, B = 20;
+  const all = gpus.flatMap(k => forward.curves[k].map(p => p.term));
+  let lo = Math.min(...all), hi = Math.max(...all);
+  const pad = (hi - lo) * 0.1 || 0.1; lo -= pad; hi += pad;
+  const X = m => L + m / 36 * (W - L - R);
+  const Y = v => H - B - (v - lo) / (hi - lo) * (H - T - B);
+
+  /* 축 */
+  g.strokeStyle = "#1f1f24"; g.lineWidth = 1;
+  g.font = "9px " + getComputedStyle(document.body).fontFamily;
+  g.fillStyle = "#5c5c66";
+  for (let i = 0; i <= 3; i++) {
+    const v = lo + (hi - lo) * i / 3, y = Y(v);
+    g.beginPath(); g.moveTo(L, y); g.lineTo(W - R, y); g.stroke();
+    g.fillText("$" + v.toFixed(2), 4, y + 3);
+  }
+  for (const m of [0, 6, 12, 18, 24, 30, 36]) {
+    g.fillText(m + "M", X(m) - 7, H - 6);
+  }
+
+  for (const gpu of gpus) {
+    const pts = forward.curves[gpu];
+    g.beginPath();
+    pts.forEach((p, i) => (i ? g.lineTo(X(p.m), Y(p.term)) : g.moveTo(X(p.m), Y(p.term))));
+    g.strokeStyle = SD_FWD_COLORS[gpu] || "#9a9aa4"; g.lineWidth = 1.5; g.stroke();
+  }
+
+  legend.innerHTML = gpus.map(gpu => {
+    const pts = forward.curves[gpu];
+    const spot = pts[0].term, far = pts[pts.length - 1].term;
+    const slope = (far / spot - 1) * 100;
+    return `<span class="sd-leg"><i style="background:${SD_FWD_COLORS[gpu] || "#9a9aa4"}"></i>${gpu}
+      <b>$${spot.toFixed(2)}</b> → 36M $${far.toFixed(2)}
+      <em class="${slope >= 0 ? "up" : "dn"}">${slope >= 0 ? "+" : "−"}${Math.abs(slope).toFixed(0)}%</em></span>`;
+  }).join("") + `<span class="sd-leg-cap">GPU 렌탈 term rate 커브 · ${forward.date} · 우하향=백워데이션</span>`;
+}
+
+/* 패널 폭이 바뀌면 포워드 커브를 다시 그린다 */
+let sdSnapshot = null;
+let sdResizeTimer = null;
+window.addEventListener("resize", () => {
+  clearTimeout(sdResizeTimer);
+  sdResizeTimer = setTimeout(() => sdSnapshot && drawForwardCurve(sdSnapshot.forward), 150);
+});
+
+async function loadSilicon() {
+  try {
+    const response = await fetch("data/silicondata.json?v=" + Date.now());
+    if (!response.ok) throw new Error("snapshot unavailable");
+    sdSnapshot = await response.json();
+    renderSilicon(sdSnapshot);
+  } catch (error) {
+    $("sd-tiles").innerHTML = `<div class="fed-loading">Silicon Data 스냅샷을 불러오지 못했습니다.</div>`;
+  }
+}
+
 buildGrid();
 buildCdsPanel();
 buildCreditPanel();
 buildFedPanel();
+buildSiliconPanel();
 initConvToggle();
 usSessionLabel();
 tickClock();
@@ -872,3 +1026,4 @@ loopNight();
 loadFedCfg().then(loopFed);
 loadCds();
 loadCredit();
+loadSilicon();
