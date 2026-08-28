@@ -1,31 +1,27 @@
 {
  "source": "FINRA TRACE (Query API · public credential)",
  "sourceUrl": "https://developer.finra.org/catalog",
- "updatedAt": "2026-08-27T02:11:18.740Z",
- "latestDate": "2026-08-26",
- "prevDate": "2026-08-25",
+ "updatedAt": "2026-08-28T05:49:42.421Z",
+ "latestDate": "2026-08-27",
+ "prevDate": "2026-08-26",
  "note": "공개 등급은 시장 전체 집계만 제공합니다(개별 발행사·CUSIP 없음). 금액 단위는 백만 달러.",
  "segments": [
   {
    "key": "high yield",
    "label": "하이일드",
    "market": "corporate",
-   "advances": 464,
-   "declines": 534,
-   "unchanged": 19,
-   "adRatio": 0.869,
-   "prevAdRatio": 2.587,
-   "high52": 232,
-   "low52": 72,
-   "volumeUsdMn": 6292,
-   "customerBuyUsdMn": 1866,
-   "customerSellUsdMn": 2007,
-   "netCustomerUsdMn": -140,
+   "advances": 679,
+   "declines": 650,
+   "unchanged": 33,
+   "adRatio": 1.045,
+   "prevAdRatio": 0.869,
+   "high52": 253,
+   "low52": 55,
+   "volumeUsdMn": 3845,
+   "customerBuyUsdMn": 1192,
+   "customerSellUsdMn": 1207,
+   "netCustomerUsdMn": -15,
    "history": [
-    {
-     "date": "2026-06-29",
-     "adRatio": 1.077
-    },
     {
      "date": "2026-06-30",
      "adRatio": 0.892
@@ -179,12 +175,20 @@
      "adRatio": 0.911
     },
     {
+     "date": "2026-08-24",
+     "adRatio": 1.015
+    },
+    {
      "date": "2026-08-25",
      "adRatio": 2.587
     },
     {
      "date": "2026-08-26",
      "adRatio": 0.869
+    },
+    {
+     "date": "2026-08-27",
+     "adRatio": 1.045
     }
    ]
   },
@@ -192,22 +196,18 @@
    "key": "high yield",
    "label": "144A 하이일드",
    "market": "144a",
-   "advances": 509,
-   "declines": 700,
-   "unchanged": 41,
-   "adRatio": 0.727,
-   "prevAdRatio": 2.568,
-   "high52": 30,
-   "low52": 17,
-   "volumeUsdMn": 8080,
+   "advances": 833,
+   "declines": 751,
+   "unchanged": 54,
+   "adRatio": 1.109,
+   "prevAdRatio": 0.727,
+   "high52": 56,
+   "low52": 16,
+   "volumeUsdMn": 8697,
    "customerBuyUsdMn": null,
    "customerSellUsdMn": null,
    "netCustomerUsdMn": null,
    "history": [
-    {
-     "date": "2026-06-29",
-     "adRatio": 1.142
-    },
     {
      "date": "2026-06-30",
      "adRatio": 1.309
@@ -361,12 +361,20 @@
      "adRatio": 0.742
     },
     {
+     "date": "2026-08-24",
+     "adRatio": 0.788
+    },
+    {
      "date": "2026-08-25",
      "adRatio": 2.568
     },
     {
      "date": "2026-08-26",
      "adRatio": 0.727
+    },
+    {
+     "date": "2026-08-27",
+     "adRatio": 1.109
     }
    ]
   },
@@ -374,22 +382,18 @@
    "key": "investment grade",
    "label": "투자등급",
    "market": "corporate",
-   "advances": 2668,
-   "declines": 5103,
-   "unchanged": 61,
-   "adRatio": 0.523,
-   "prevAdRatio": 4.623,
-   "high52": 109,
-   "low52": 255,
-   "volumeUsdMn": 36087,
-   "customerBuyUsdMn": 10498,
-   "customerSellUsdMn": 12142,
-   "netCustomerUsdMn": -1644,
+   "advances": 3951,
+   "declines": 5594,
+   "unchanged": 113,
+   "adRatio": 0.706,
+   "prevAdRatio": 0.523,
+   "high52": 103,
+   "low52": 279,
+   "volumeUsdMn": 33846,
+   "customerBuyUsdMn": 10645,
+   "customerSellUsdMn": 10090,
+   "netCustomerUsdMn": 554,
    "history": [
-    {
-     "date": "2026-06-29",
-     "adRatio": 1.155
-    },
     {
      "date": "2026-06-30",
      "adRatio": 0.239
@@ -543,12 +547,20 @@
      "adRatio": 0.363
     },
     {
+     "date": "2026-08-24",
+     "adRatio": 1.487
+    },
+    {
      "date": "2026-08-25",
      "adRatio": 4.623
     },
     {
      "date": "2026-08-26",
      "adRatio": 0.523
+    },
+    {
+     "date": "2026-08-27",
+     "adRatio": 0.706
     }
    ]
   },
@@ -556,22 +568,18 @@
    "key": "convertibles",
    "label": "컨버터블",
    "market": "corporate",
-   "advances": 64,
-   "declines": 72,
+   "advances": 97,
+   "declines": 83,
    "unchanged": 1,
-   "adRatio": 0.889,
-   "prevAdRatio": 1.977,
-   "high52": 11,
-   "low52": 5,
-   "volumeUsdMn": 1652,
-   "customerBuyUsdMn": 794,
-   "customerSellUsdMn": 818,
-   "netCustomerUsdMn": -24,
+   "adRatio": 1.169,
+   "prevAdRatio": 0.889,
+   "high52": 19,
+   "low52": 2,
+   "volumeUsdMn": 1895,
+   "customerBuyUsdMn": 992,
+   "customerSellUsdMn": 842,
+   "netCustomerUsdMn": 149,
    "history": [
-    {
-     "date": "2026-06-29",
-     "adRatio": 1.515
-    },
     {
      "date": "2026-06-30",
      "adRatio": 1.253
@@ -725,12 +733,20 @@
      "adRatio": 1.239
     },
     {
+     "date": "2026-08-24",
+     "adRatio": 0.615
+    },
+    {
      "date": "2026-08-25",
      "adRatio": 1.977
     },
     {
      "date": "2026-08-26",
      "adRatio": 0.889
+    },
+    {
+     "date": "2026-08-27",
+     "adRatio": 1.169
     }
    ]
   }
