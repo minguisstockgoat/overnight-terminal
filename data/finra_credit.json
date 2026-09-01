@@ -1,7 +1,7 @@
 {
  "source": "FINRA TRACE (Query API · public credential)",
  "sourceUrl": "https://developer.finra.org/catalog",
- "updatedAt": "2026-09-01T00:48:12.333Z",
+ "updatedAt": "2026-09-01T23:34:48.495Z",
  "latestDate": "2026-08-31",
  "prevDate": "2026-08-28",
  "note": "공개 등급은 시장 전체 집계만 제공합니다(개별 발행사·CUSIP 없음). 금액 단위는 백만 달러.",
