@@ -1,7 +1,7 @@
 {
  "source": "FINRA TRACE (Query API · public credential)",
  "sourceUrl": "https://developer.finra.org/catalog",
- "updatedAt": "2026-09-08T23:40:59.577Z",
+ "updatedAt": "2026-09-09T23:31:14.799Z",
  "latestDate": "2026-09-08",
  "prevDate": "2026-09-04",
  "note": "공개 등급은 시장 전체 집계만 제공합니다(개별 발행사·CUSIP 없음). 금액 단위는 백만 달러.",
@@ -185,6 +185,188 @@
     {
      "date": "2026-09-08",
      "adRatio": 0.608
+    }
+   ]
+  },
+  {
+   "key": "high yield",
+   "label": "144A 하이일드",
+   "market": "144a",
+   "advances": 389,
+   "declines": 1197,
+   "unchanged": 21,
+   "adRatio": 0.325,
+   "prevAdRatio": 0.362,
+   "high52": 11,
+   "low52": 76,
+   "volumeUsdMn": 7943,
+   "customerBuyUsdMn": null,
+   "customerSellUsdMn": null,
+   "netCustomerUsdMn": null,
+   "history": [
+    {
+     "date": "2026-07-13",
+     "adRatio": 0.262
+    },
+    {
+     "date": "2026-07-14",
+     "adRatio": 1.017
+    },
+    {
+     "date": "2026-07-15",
+     "adRatio": 2.083
+    },
+    {
+     "date": "2026-07-16",
+     "adRatio": 0.813
+    },
+    {
+     "date": "2026-07-17",
+     "adRatio": 0.593
+    },
+    {
+     "date": "2026-07-20",
+     "adRatio": 0.565
+    },
+    {
+     "date": "2026-07-21",
+     "adRatio": 0.342
+    },
+    {
+     "date": "2026-07-22",
+     "adRatio": 0.348
+    },
+    {
+     "date": "2026-07-23",
+     "adRatio": 0.075
+    },
+    {
+     "date": "2026-07-24",
+     "adRatio": 0.684
+    },
+    {
+     "date": "2026-07-27",
+     "adRatio": 1.012
+    },
+    {
+     "date": "2026-07-28",
+     "adRatio": 1.097
+    },
+    {
+     "date": "2026-07-29",
+     "adRatio": 0.388
+    },
+    {
+     "date": "2026-07-30",
+     "adRatio": 1.199
+    },
+    {
+     "date": "2026-07-31",
+     "adRatio": 0.658
+    },
+    {
+     "date": "2026-08-03",
+     "adRatio": 2.826
+    },
+    {
+     "date": "2026-08-04",
+     "adRatio": 3.149
+    },
+    {
+     "date": "2026-08-05",
+     "adRatio": 0.842
+    },
+    {
+     "date": "2026-08-06",
+     "adRatio": 0.543
+    },
+    {
+     "date": "2026-08-07",
+     "adRatio": 1.653
+    },
+    {
+     "date": "2026-08-10",
+     "adRatio": 0.332
+    },
+    {
+     "date": "2026-08-11",
+     "adRatio": 0.905
+    },
+    {
+     "date": "2026-08-12",
+     "adRatio": 1.391
+    },
+    {
+     "date": "2026-08-13",
+     "adRatio": 2.637
+    },
+    {
+     "date": "2026-08-14",
+     "adRatio": 0.566
+    },
+    {
+     "date": "2026-08-17",
+     "adRatio": 0.451
+    },
+    {
+     "date": "2026-08-18",
+     "adRatio": 0.224
+    },
+    {
+     "date": "2026-08-19",
+     "adRatio": 1.845
+    },
+    {
+     "date": "2026-08-20",
+     "adRatio": 0.235
+    },
+    {
+     "date": "2026-08-21",
+     "adRatio": 0.742
+    },
+    {
+     "date": "2026-08-24",
+     "adRatio": 0.788
+    },
+    {
+     "date": "2026-08-25",
+     "adRatio": 2.568
+    },
+    {
+     "date": "2026-08-26",
+     "adRatio": 0.727
+    },
+    {
+     "date": "2026-08-27",
+     "adRatio": 1.109
+    },
+    {
+     "date": "2026-08-28",
+     "adRatio": 0.331
+    },
+    {
+     "date": "2026-08-31",
+     "adRatio": 0.34
+    },
+    {
+     "date": "2026-09-01",
+     "adRatio": 0.246
+    },
+    {
+     "date": "2026-09-02",
+     "adRatio": 0.725
+    },
+    {
+     "date": "2026-09-03",
+     "adRatio": 1.108
+    },
+    {
+     "date": "2026-09-04",
+     "adRatio": 0.362
+    },
+    {
+     "date": "2026-09-08",
+     "adRatio": 0.325
     }
    ]
   },
