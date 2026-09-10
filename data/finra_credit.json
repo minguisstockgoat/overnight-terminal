@@ -1,26 +1,26 @@
 {
  "source": "FINRA TRACE (Query API · public credential)",
  "sourceUrl": "https://developer.finra.org/catalog",
- "updatedAt": "2026-09-09T23:31:14.799Z",
- "latestDate": "2026-09-08",
- "prevDate": "2026-09-04",
+ "updatedAt": "2026-09-10T23:25:11.830Z",
+ "latestDate": "2026-09-09",
+ "prevDate": "2026-09-08",
  "note": "공개 등급은 시장 전체 집계만 제공합니다(개별 발행사·CUSIP 없음). 금액 단위는 백만 달러.",
  "segments": [
   {
    "key": "high yield",
    "label": "하이일드",
    "market": "corporate",
-   "advances": 519,
-   "declines": 853,
-   "unchanged": 19,
-   "adRatio": 0.608,
-   "prevAdRatio": 0.744,
-   "high52": 179,
-   "low52": 150,
-   "volumeUsdMn": 6155,
-   "customerBuyUsdMn": 2258,
-   "customerSellUsdMn": 1860,
-   "netCustomerUsdMn": 398,
+   "advances": 551,
+   "declines": 1099,
+   "unchanged": 23,
+   "adRatio": 0.501,
+   "prevAdRatio": 0.608,
+   "high52": 325,
+   "low52": 219,
+   "volumeUsdMn": 8261,
+   "customerBuyUsdMn": 3270,
+   "customerSellUsdMn": 2482,
+   "netCustomerUsdMn": 788,
    "history": [
     {
      "date": "2026-07-13",
@@ -185,6 +185,10 @@
     {
      "date": "2026-09-08",
      "adRatio": 0.608
+    },
+    {
+     "date": "2026-09-09",
+     "adRatio": 0.501
     }
    ]
   },
@@ -192,14 +196,14 @@
    "key": "high yield",
    "label": "144A 하이일드",
    "market": "144a",
-   "advances": 389,
-   "declines": 1197,
-   "unchanged": 21,
-   "adRatio": 0.325,
-   "prevAdRatio": 0.362,
-   "high52": 11,
-   "low52": 76,
-   "volumeUsdMn": 7943,
+   "advances": 249,
+   "declines": 1275,
+   "unchanged": 28,
+   "adRatio": 0.195,
+   "prevAdRatio": 0.325,
+   "high52": 18,
+   "low52": 129,
+   "volumeUsdMn": 11081,
    "customerBuyUsdMn": null,
    "customerSellUsdMn": null,
    "netCustomerUsdMn": null,
@@ -367,6 +371,10 @@
     {
      "date": "2026-09-08",
      "adRatio": 0.325
+    },
+    {
+     "date": "2026-09-09",
+     "adRatio": 0.195
     }
    ]
   },
@@ -374,17 +382,17 @@
    "key": "investment grade",
    "label": "투자등급",
    "market": "corporate",
-   "advances": 2441,
-   "declines": 7294,
-   "unchanged": 48,
-   "adRatio": 0.335,
-   "prevAdRatio": 0.55,
-   "high52": 69,
-   "low52": 1816,
-   "volumeUsdMn": 30594,
-   "customerBuyUsdMn": 11197,
-   "customerSellUsdMn": 9105,
-   "netCustomerUsdMn": 2092,
+   "advances": 2155,
+   "declines": 7691,
+   "unchanged": 52,
+   "adRatio": 0.28,
+   "prevAdRatio": 0.335,
+   "high52": 81,
+   "low52": 2666,
+   "volumeUsdMn": 35924,
+   "customerBuyUsdMn": 13134,
+   "customerSellUsdMn": 10796,
+   "netCustomerUsdMn": 2337,
    "history": [
     {
      "date": "2026-07-13",
@@ -549,6 +557,10 @@
     {
      "date": "2026-09-08",
      "adRatio": 0.335
+    },
+    {
+     "date": "2026-09-09",
+     "adRatio": 0.28
     }
    ]
   },
@@ -556,17 +568,17 @@
    "key": "convertibles",
    "label": "컨버터블",
    "market": "corporate",
-   "advances": 74,
-   "declines": 96,
-   "unchanged": 5,
-   "adRatio": 0.771,
-   "prevAdRatio": 1.361,
-   "high52": 3,
-   "low52": 5,
-   "volumeUsdMn": 1265,
-   "customerBuyUsdMn": 597,
-   "customerSellUsdMn": 604,
-   "netCustomerUsdMn": -7,
+   "advances": 64,
+   "declines": 115,
+   "unchanged": 4,
+   "adRatio": 0.557,
+   "prevAdRatio": 0.771,
+   "high52": 2,
+   "low52": 8,
+   "volumeUsdMn": 1694,
+   "customerBuyUsdMn": 723,
+   "customerSellUsdMn": 890,
+   "netCustomerUsdMn": -166,
    "history": [
     {
      "date": "2026-07-13",
@@ -731,6 +743,10 @@
     {
      "date": "2026-09-08",
      "adRatio": 0.771
+    },
+    {
+     "date": "2026-09-09",
+     "adRatio": 0.557
     }
    ]
   }
