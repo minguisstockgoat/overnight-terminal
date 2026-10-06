@@ -1,39 +1,27 @@
 {
  "source": "FINRA TRACE (Query API · public credential)",
  "sourceUrl": "https://developer.finra.org/catalog",
- "updatedAt": "2026-10-03T00:45:08.799Z",
- "latestDate": "2026-10-02",
- "prevDate": "2026-10-01",
+ "updatedAt": "2026-10-06T01:55:57.982Z",
+ "latestDate": "2026-10-05",
+ "prevDate": "2026-10-02",
  "note": "공개 등급은 시장 전체 집계만 제공합니다(개별 발행사·CUSIP 없음). 금액 단위는 백만 달러.",
  "segments": [
   {
    "key": "high yield",
    "label": "하이일드",
    "market": "corporate",
-   "advances": 655,
-   "declines": 725,
-   "unchanged": 27,
-   "adRatio": 0.903,
-   "prevAdRatio": 0.651,
-   "high52": 126,
-   "low52": 292,
-   "volumeUsdMn": 4463,
-   "customerBuyUsdMn": 1539,
-   "customerSellUsdMn": 1429,
-   "netCustomerUsdMn": 109,
+   "advances": 686,
+   "declines": 752,
+   "unchanged": 19,
+   "adRatio": 0.912,
+   "prevAdRatio": 0.903,
+   "high52": 181,
+   "low52": 317,
+   "volumeUsdMn": 5200,
+   "customerBuyUsdMn": 1672,
+   "customerSellUsdMn": 1825,
+   "netCustomerUsdMn": -153,
    "history": [
-    {
-     "date": "2026-08-05",
-     "adRatio": 1.265
-    },
-    {
-     "date": "2026-08-06",
-     "adRatio": 0.813
-    },
-    {
-     "date": "2026-08-07",
-     "adRatio": 1.718
-    },
     {
      "date": "2026-08-10",
      "adRatio": 0.904
@@ -189,6 +177,10 @@
     {
      "date": "2026-10-02",
      "adRatio": 0.903
+    },
+    {
+     "date": "2026-10-05",
+     "adRatio": 0.912
     }
    ]
   },
@@ -196,30 +188,18 @@
    "key": "high yield",
    "label": "144A 하이일드",
    "market": "144a",
-   "advances": 1095,
-   "declines": 593,
-   "unchanged": 22,
-   "adRatio": 1.847,
-   "prevAdRatio": 0.507,
-   "high52": 15,
-   "low52": 98,
-   "volumeUsdMn": 13499,
+   "advances": 724,
+   "declines": 1010,
+   "unchanged": 37,
+   "adRatio": 0.717,
+   "prevAdRatio": 1.847,
+   "high52": 7,
+   "low52": 147,
+   "volumeUsdMn": 12016,
    "customerBuyUsdMn": null,
    "customerSellUsdMn": null,
    "netCustomerUsdMn": null,
    "history": [
-    {
-     "date": "2026-08-05",
-     "adRatio": 0.842
-    },
-    {
-     "date": "2026-08-06",
-     "adRatio": 0.543
-    },
-    {
-     "date": "2026-08-07",
-     "adRatio": 1.653
-    },
     {
      "date": "2026-08-10",
      "adRatio": 0.332
@@ -375,6 +355,10 @@
     {
      "date": "2026-10-02",
      "adRatio": 1.847
+    },
+    {
+     "date": "2026-10-05",
+     "adRatio": 0.717
     }
    ]
   },
@@ -382,30 +366,18 @@
    "key": "investment grade",
    "label": "투자등급",
    "market": "corporate",
-   "advances": 3458,
-   "declines": 6802,
-   "unchanged": 55,
-   "adRatio": 0.508,
-   "prevAdRatio": 1.824,
-   "high52": 49,
-   "low52": 1564,
-   "volumeUsdMn": 32648,
-   "customerBuyUsdMn": 9606,
-   "customerSellUsdMn": 10942,
-   "netCustomerUsdMn": -1336,
+   "advances": 4123,
+   "declines": 6530,
+   "unchanged": 51,
+   "adRatio": 0.631,
+   "prevAdRatio": 0.508,
+   "high52": 53,
+   "low52": 2889,
+   "volumeUsdMn": 38346,
+   "customerBuyUsdMn": 11993,
+   "customerSellUsdMn": 13424,
+   "netCustomerUsdMn": -1431,
    "history": [
-    {
-     "date": "2026-08-05",
-     "adRatio": 1.509
-    },
-    {
-     "date": "2026-08-06",
-     "adRatio": 0.238
-    },
-    {
-     "date": "2026-08-07",
-     "adRatio": 2.071
-    },
     {
      "date": "2026-08-10",
      "adRatio": 0.202
@@ -561,6 +533,10 @@
     {
      "date": "2026-10-02",
      "adRatio": 0.508
+    },
+    {
+     "date": "2026-10-05",
+     "adRatio": 0.631
     }
    ]
   },
@@ -568,30 +544,18 @@
    "key": "convertibles",
    "label": "컨버터블",
    "market": "corporate",
-   "advances": 117,
-   "declines": 79,
-   "unchanged": 1,
-   "adRatio": 1.481,
-   "prevAdRatio": 0.853,
-   "high52": 11,
-   "low52": 12,
-   "volumeUsdMn": 2073,
-   "customerBuyUsdMn": 983,
-   "customerSellUsdMn": 1020,
-   "netCustomerUsdMn": -37,
+   "advances": 86,
+   "declines": 90,
+   "unchanged": 6,
+   "adRatio": 0.956,
+   "prevAdRatio": 1.481,
+   "high52": 7,
+   "low52": 19,
+   "volumeUsdMn": 1189,
+   "customerBuyUsdMn": 563,
+   "customerSellUsdMn": 562,
+   "netCustomerUsdMn": 2,
    "history": [
-    {
-     "date": "2026-08-05",
-     "adRatio": 1.077
-    },
-    {
-     "date": "2026-08-06",
-     "adRatio": 0.517
-    },
-    {
-     "date": "2026-08-07",
-     "adRatio": 1.722
-    },
     {
      "date": "2026-08-10",
      "adRatio": 0.961
@@ -747,6 +711,10 @@
     {
      "date": "2026-10-02",
      "adRatio": 1.481
+    },
+    {
+     "date": "2026-10-05",
+     "adRatio": 0.956
     }
    ]
   }
