@@ -1,13 +1,13 @@
 {
  "source": "ICE Clear Credit",
  "sourceUrl": "https://status.ice.com/cds-settlement-prices/icc/single-name-instruments",
- "updatedAt": "2026-11-12T02:20:00.500Z",
+ "updatedAt": "2026-11-13T01:59:08.309Z",
  "note": "ICE 공개값은 5Y CDS EOD Price이며, spreadBp는 플랫 해저드 모형으로 환산한 근사 par spread입니다(회수율 40% 가정).",
  "model": {
   "recovery": 0.4,
-  "discountRate": 0.03418,
+  "discountRate": 0.03477,
   "discountSource": "100/500 듀얼쿠폰 2종 역산",
-  "residualBp": 0.3
+  "residualBp": 0.1
  },
  "missing": [],
  "items": [
@@ -17,11 +17,11 @@
    "couponBp": 500,
    "tag": "neocloud",
    "instrument": "COREWEI.SNRFOR.USD.XR14.500.2031-12-20",
-   "clearingDate": "2026-11-11",
+   "clearingDate": "2026-11-12",
    "maturity": "2031-12-20",
-   "eodPrice": 80.5226,
-   "spreadBp": 1142.7,
-   "previousEodPrice": 80.4594,
+   "eodPrice": 82.8306,
+   "spreadBp": 1049.3,
+   "previousEodPrice": 80.5226,
    "previousSpreadBp": 1142.7
   },
   {
@@ -30,11 +30,11 @@
    "couponBp": 100,
    "tag": "neocloud",
    "instrument": "ORCLE.SNRFOR.USD.XR14.100.2031-12-20",
-   "clearingDate": "2026-11-11",
+   "clearingDate": "2026-11-12",
    "maturity": "2031-12-20",
-   "eodPrice": 91.7488,
-   "spreadBp": 299.5,
-   "previousEodPrice": 91.7171,
+   "eodPrice": 91.9917,
+   "spreadBp": 293.5,
+   "previousEodPrice": 91.7488,
    "previousSpreadBp": 299.5
   },
   {
@@ -43,11 +43,11 @@
    "couponBp": 100,
    "tag": "datacenter",
    "instrument": "EQIX.SNRFOR.USD.XR14.100.2031-12-20",
-   "clearingDate": "2026-11-11",
+   "clearingDate": "2026-11-12",
    "maturity": "2031-12-20",
-   "eodPrice": 98.4966,
-   "spreadBp": 134,
-   "previousEodPrice": 98.4906,
+   "eodPrice": 98.5346,
+   "spreadBp": 133.2,
+   "previousEodPrice": 98.4966,
    "previousSpreadBp": 134
   },
   {
@@ -56,11 +56,11 @@
    "couponBp": 100,
    "tag": "hardware",
    "instrument": "DELLN.SNRFOR.USD.XR14.100.2031-12-20",
-   "clearingDate": "2026-11-11",
+   "clearingDate": "2026-11-12",
    "maturity": "2031-12-20",
-   "eodPrice": 100.2432,
-   "spreadBp": 94.6,
-   "previousEodPrice": 100.2441,
+   "eodPrice": 100.2973,
+   "spreadBp": 93.4,
+   "previousEodPrice": 100.2432,
    "previousSpreadBp": 94.6
   },
   {
@@ -69,11 +69,11 @@
    "couponBp": 100,
    "tag": "hyperscaler",
    "instrument": "METAPL.SNRFOR.USD.XR14.100.2031-12-20",
-   "clearingDate": "2026-11-11",
+   "clearingDate": "2026-11-12",
    "maturity": "2031-12-20",
-   "eodPrice": 99.6082,
-   "spreadBp": 108.8,
-   "previousEodPrice": 99.6066,
+   "eodPrice": 99.7294,
+   "spreadBp": 106.1,
+   "previousEodPrice": 99.6082,
    "previousSpreadBp": 108.8
   },
   {
@@ -82,11 +82,11 @@
    "couponBp": 100,
    "tag": "hyperscaler",
    "instrument": "AMZN.SNRFOR.USD.XR14.100.2031-12-20",
-   "clearingDate": "2026-11-11",
+   "clearingDate": "2026-11-12",
    "maturity": "2031-12-20",
-   "eodPrice": 100.1582,
-   "spreadBp": 96.5,
-   "previousEodPrice": 100.1589,
+   "eodPrice": 100.2858,
+   "spreadBp": 93.6,
+   "previousEodPrice": 100.1582,
    "previousSpreadBp": 96.5
   },
   {
@@ -95,11 +95,11 @@
    "couponBp": 100,
    "tag": "hyperscaler",
    "instrument": "MSFT.SNRFOR.USD.XR14.100.2031-12-20",
-   "clearingDate": "2026-11-11",
+   "clearingDate": "2026-11-12",
    "maturity": "2031-12-20",
-   "eodPrice": 102.2182,
-   "spreadBp": 51.4,
-   "previousEodPrice": 102.2271,
+   "eodPrice": 102.2866,
+   "spreadBp": 49.9,
+   "previousEodPrice": 102.2182,
    "previousSpreadBp": 51.4
   }
  ]
