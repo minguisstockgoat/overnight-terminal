@@ -1,39 +1,27 @@
 {
  "source": "FINRA TRACE (Query API · public credential)",
  "sourceUrl": "https://developer.finra.org/catalog",
- "updatedAt": "2026-11-21T02:51:08.230Z",
- "latestDate": "2026-11-20",
- "prevDate": "2026-11-19",
+ "updatedAt": "2026-11-24T05:34:45.815Z",
+ "latestDate": "2026-11-23",
+ "prevDate": "2026-11-20",
  "note": "공개 등급은 시장 전체 집계만 제공합니다(개별 발행사·CUSIP 없음). 금액 단위는 백만 달러.",
  "segments": [
   {
    "key": "high yield",
    "label": "하이일드",
    "market": "corporate",
-   "advances": 419,
-   "declines": 953,
-   "unchanged": 16,
-   "adRatio": 0.44,
-   "prevAdRatio": 0.676,
-   "high52": 64,
-   "low52": 418,
-   "volumeUsdMn": 5369,
-   "customerBuyUsdMn": 1712,
-   "customerSellUsdMn": 2021,
-   "netCustomerUsdMn": -310,
+   "advances": 743,
+   "declines": 629,
+   "unchanged": 17,
+   "adRatio": 1.181,
+   "prevAdRatio": 0.44,
+   "high52": 59,
+   "low52": 279,
+   "volumeUsdMn": 4060,
+   "customerBuyUsdMn": 1418,
+   "customerSellUsdMn": 1155,
+   "netCustomerUsdMn": 263,
    "history": [
-    {
-     "date": "2026-09-23",
-     "adRatio": 0.272
-    },
-    {
-     "date": "2026-09-24",
-     "adRatio": 0.281
-    },
-    {
-     "date": "2026-09-25",
-     "adRatio": 0.414
-    },
     {
      "date": "2026-09-28",
      "adRatio": 0.245
@@ -193,6 +181,10 @@
     {
      "date": "2026-11-20",
      "adRatio": 0.44
+    },
+    {
+     "date": "2026-11-23",
+     "adRatio": 1.181
     }
    ]
   },
@@ -200,30 +192,18 @@
    "key": "high yield",
    "label": "144A 하이일드",
    "market": "144a",
-   "advances": 320,
-   "declines": 1289,
-   "unchanged": 38,
-   "adRatio": 0.248,
-   "prevAdRatio": 0.589,
-   "high52": 3,
-   "low52": 208,
-   "volumeUsdMn": 12129,
+   "advances": 1175,
+   "declines": 505,
+   "unchanged": 24,
+   "adRatio": 2.327,
+   "prevAdRatio": 0.248,
+   "high52": 12,
+   "low52": 121,
+   "volumeUsdMn": 11010,
    "customerBuyUsdMn": null,
    "customerSellUsdMn": null,
    "netCustomerUsdMn": null,
    "history": [
-    {
-     "date": "2026-09-23",
-     "adRatio": 0.055
-    },
-    {
-     "date": "2026-09-24",
-     "adRatio": 0.113
-    },
-    {
-     "date": "2026-09-25",
-     "adRatio": 0.222
-    },
     {
      "date": "2026-09-28",
      "adRatio": 0.078
@@ -383,6 +363,10 @@
     {
      "date": "2026-11-20",
      "adRatio": 0.248
+    },
+    {
+     "date": "2026-11-23",
+     "adRatio": 2.327
     }
    ]
   },
@@ -390,30 +374,18 @@
    "key": "investment grade",
    "label": "투자등급",
    "market": "corporate",
-   "advances": 7981,
-   "declines": 2072,
-   "unchanged": 31,
-   "adRatio": 3.852,
-   "prevAdRatio": 1.098,
-   "high52": 74,
-   "low52": 263,
-   "volumeUsdMn": 33583,
-   "customerBuyUsdMn": 10380,
-   "customerSellUsdMn": 11521,
-   "netCustomerUsdMn": -1141,
+   "advances": 5867,
+   "declines": 4586,
+   "unchanged": 72,
+   "adRatio": 1.279,
+   "prevAdRatio": 3.852,
+   "high52": 109,
+   "low52": 280,
+   "volumeUsdMn": 38129,
+   "customerBuyUsdMn": 13857,
+   "customerSellUsdMn": 11412,
+   "netCustomerUsdMn": 2446,
    "history": [
-    {
-     "date": "2026-09-23",
-     "adRatio": 0.113
-    },
-    {
-     "date": "2026-09-24",
-     "adRatio": 0.181
-    },
-    {
-     "date": "2026-09-25",
-     "adRatio": 0.68
-    },
     {
      "date": "2026-09-28",
      "adRatio": 0.123
@@ -573,6 +545,10 @@
     {
      "date": "2026-11-20",
      "adRatio": 3.852
+    },
+    {
+     "date": "2026-11-23",
+     "adRatio": 1.279
     }
    ]
   },
@@ -580,30 +556,18 @@
    "key": "convertibles",
    "label": "컨버터블",
    "market": "corporate",
-   "advances": 53,
-   "declines": 147,
-   "unchanged": 1,
-   "adRatio": 0.361,
-   "prevAdRatio": 0.396,
+   "advances": 144,
+   "declines": 49,
+   "unchanged": 2,
+   "adRatio": 2.939,
+   "prevAdRatio": 0.361,
    "high52": 4,
-   "low52": 46,
-   "volumeUsdMn": 2144,
-   "customerBuyUsdMn": 1045,
-   "customerSellUsdMn": 1034,
-   "netCustomerUsdMn": 11,
+   "low52": 13,
+   "volumeUsdMn": 1716,
+   "customerBuyUsdMn": 775,
+   "customerSellUsdMn": 849,
+   "netCustomerUsdMn": -73,
    "history": [
-    {
-     "date": "2026-09-23",
-     "adRatio": 0.592
-    },
-    {
-     "date": "2026-09-24",
-     "adRatio": 0.419
-    },
-    {
-     "date": "2026-09-25",
-     "adRatio": 0.901
-    },
     {
      "date": "2026-09-28",
      "adRatio": 0.481
@@ -763,6 +727,10 @@
     {
      "date": "2026-11-20",
      "adRatio": 0.361
+    },
+    {
+     "date": "2026-11-23",
+     "adRatio": 2.939
     }
    ]
   }
