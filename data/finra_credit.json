@@ -1,7 +1,7 @@
 {
  "source": "FINRA TRACE (Query API · public credential)",
  "sourceUrl": "https://developer.finra.org/catalog",
- "updatedAt": "2026-11-26T03:47:38.053Z",
+ "updatedAt": "2026-11-27T03:48:30.810Z",
  "latestDate": "2026-11-25",
  "prevDate": "2026-11-24",
  "note": "공개 등급은 시장 전체 집계만 제공합니다(개별 발행사·CUSIP 없음). 금액 단위는 백만 달러.",
@@ -22,10 +22,6 @@
    "customerSellUsdMn": 819,
    "netCustomerUsdMn": 26,
    "history": [
-    {
-     "date": "2026-09-28",
-     "adRatio": 0.245
-    },
     {
      "date": "2026-09-29",
      "adRatio": 0.474
@@ -213,10 +209,6 @@
    "netCustomerUsdMn": null,
    "history": [
     {
-     "date": "2026-09-28",
-     "adRatio": 0.078
-    },
-    {
      "date": "2026-09-29",
      "adRatio": 0.27
     },
@@ -403,10 +395,6 @@
    "netCustomerUsdMn": -1327,
    "history": [
     {
-     "date": "2026-09-28",
-     "adRatio": 0.123
-    },
-    {
      "date": "2026-09-29",
      "adRatio": 0.595
     },
@@ -592,10 +580,6 @@
    "customerSellUsdMn": 498,
    "netCustomerUsdMn": 28,
    "history": [
-    {
-     "date": "2026-09-28",
-     "adRatio": 0.481
-    },
     {
      "date": "2026-09-29",
      "adRatio": 0.609
